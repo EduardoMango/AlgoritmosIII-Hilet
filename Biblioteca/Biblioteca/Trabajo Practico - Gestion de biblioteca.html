@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Trabajo Práctico Nivelatorio - Gestión de Biblioteca</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        :root {
+            /* Tema Claro */
+            --primary: #25435D;
+            --primary-dark: #1B3247;
+            --secondary: #4A6A86;
+            --accent: #6FA3D8;
+            --background: #FFFFFF;
+            --background-secondary: #F5F7FA;
+            --text-principal: #1D2A35;
+            --text-secundario: #5F6B75;
+            --borde: #D8E0E8;
+            --code-bg: #F8FAF0;
+
+            /* Colores de verbos HTTP */
+            --http-post: #1e40af;
+            --http-post-bg: #eff6ff;
+            --http-post-border: #bfdbfe;
+            --http-get: #166534;
+            --http-get-bg: #f0fdf4;
+            --http-get-border: #bbf7d0;
+            --http-put: #854d0e;
+            --http-put-bg: #fdfaf2;
+            --http-put-border: #fef08a;
+            --http-delete: #991b1b;
+            --http-delete-bg: #fef2f2;
+            --http-delete-border: #fecaca;
+
+            --transition-speed: 0.25s;
+        }
+
+        [data-theme="dark"] {
+            /* Tema Oscuro */
+            --primary: #4A6A86;
+            --primary-dark: #25435D;
+            --secondary: #6FA3D8;
+            --accent: #9BC3EA;
+            --background: #12181F;
+            --background-secondary: #1A232D;
+            --text-principal: #E2E8F0;
+            --text-secundario: #94A3B8;
+            --borde: #2D3945;
+            --code-bg: #1E2631;
+
+            /* Ajustes verbos HTTP en modo oscuro */
+            --http-post: #60a5fa;
+            --http-post-bg: #1e293b;
+            --http-post-border: #2563eb;
+            --http-get: #4ade80;
+            --http-get-bg: #14532d;
+            --http-get-border: #16a34a;
+            --http-put: #facc15;
+            --http-put-bg: #422006;
+            --http-put-border: #ca8a04;
+            --http-delete: #f87171;
+            --http-delete-bg: #451a03;
+            --http-delete-border: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-principal);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Cabecera Institucional */
+        .institutional-header {
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 16px;
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .header-content {
+            display: table;
+            width: 100%;
+        }
+
+        .header-text {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+
+
+
+        .institution-name {
+            font-weight: 700;
+            font-size: 16pt;
+            color: var(--primary);
+            margin: 0 0 4px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-line {
+            font-size: 10.5pt;
+            color: var(--text-secundario);
+            margin: 2px 0;
+        }
+
+        .meta-line strong {
+            color: var(--text-principal);
+        }
+
+        /* Botón de cambio de tema */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--background-secondary);
+            border: 1px solid var(--borde);
+            color: var(--text-principal);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 9.5pt;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent);
+            background-color: var(--borde);
+        }
+
+        /* Títulos */
+        h1 {
+            font-size: 24pt;
+            color: var(--primary-dark);
+            margin: 30px 0 20px 0;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 15pt;
+            color: var(--primary);
+            margin: 35px 0 15px 0;
+            font-weight: 600;
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+        }
+
+        p {
+            margin: 0 0 16px 0;
+            text-align: justify;
+            color: var(--text-principal);
+        }
+
+        /* Cajas de componentes especializados de la guía */
+        .highlight-box {
+            background-color: var(--background-secondary);
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Bloques de Código DDL */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10pt;
+            overflow-x: auto;
+            margin: 20px 0;
+            color: var(--text-principal);
+        }
+
+        /* Matriz de Endpoints (Tabla) */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 25px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+            background-color: var(--background);
+        }
+
+        th {
+            background-color: var(--background-secondary);
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-align: left;
+            border-bottom: 3px solid var(--borde);
+            padding: 12px 10px;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--borde);
+            vertical-align: top;
+            color: var(--text-principal);
+        }
+
+        /* Badges HTTP */
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 9pt;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            text-align: center;
+            min-width: 65px;
+        }
+
+        .badge-post {
+            background-color: var(--http-post-bg);
+            color: var(--http-post);
+            border: 1px solid var(--http-post-border);
+        }
+
+        .badge-get {
+            background-color: var(--http-get-bg);
+            color: var(--http-get);
+            border: 1px solid var(--http-get-border);
+        }
+
+        .badge-put {
+            background-color: var(--http-put-bg);
+            color: var(--http-put);
+            border: 1px solid var(--http-put-border);
+        }
+
+        .badge-delete {
+            background-color: var(--http-delete-bg);
+            color: var(--http-delete);
+            border: 1px solid var(--http-delete-border);
+        }
+
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--text-principal);
+        }
+
+        /* Estilos del contenedor del Diagrama de base de datos */
+        .der-container {
+            background-color: var(--background-secondary);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .der-svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Selectores dinámicos para los elementos internos del SVG según el modo visual */
+        .der-svg .bg-table {
+            fill: var(--background);
+            stroke: var(--borde);
+        }
+
+        .der-svg .header-table {
+            fill: var(--primary);
+        }
+
+        .der-svg .header-text-svg {
+            fill: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .der-svg .field-text {
+            fill: var(--text-principal);
+            font-family: 'JetBrains Mono', sans-serif;
+            font-size: 12px;
+        }
+
+        .der-svg .field-type {
+            fill: var(--text-secundario);
+            font-family: 'JetBrains Mono', sans-serif;
+            font-size: 11px;
+        }
+
+        .der-svg .pk-fk {
+            fill: var(--accent);
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .der-svg .line-rel {
+            stroke: var(--secondary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .der-svg .line-text {
+            fill: var(--text-secundario);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            border-top: 1px solid var(--borde);
+            padding-top: 15px;
+            font-size: 9.5pt;
+            color: var(--text-secundario);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">Cambiar Modo</button>
+
+        <header class="institutional-header">
+            <div class="header-content">
+                <div class="header-text">
+                    <div class="institution-name">Instituto Hilet</div>
+                    <div class="meta-line"><strong>Carrera:</strong> Analista de Sistemas &nbsp;|&nbsp;
+                        <strong>Materia:</strong> Algoritmos III
+                    </div>
+                    <div class="meta-line"><strong>Docente:</strong> Tec. Mango Eduardo</div>
+                </div>
+                <div class="header-logo">
+                    <svg viewBox="0 0 100 100">
+                        <polygon points="50,15 15,35 50,55 85,35" />
+                        <polygon points="15,45 50,65 85,45 85,55 50,75 15,55" />
+                        <polygon points="15,65 50,85 85,65 85,75 50,95 15,75" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <h1>Trabajo Práctico Nivelatorio<br>Backend de Gestión de Biblioteca</h1>
+
+            <h2>Introducción y Objetivo</h2>
+            <p>
+                El objetivo de este trabajo práctico es implementar el backend de una API REST completa enfocado en la
+                gestión operativa de una Biblioteca, aplicando de manera estricta una arquitectura en capas fundamentada
+                en la cadena de responsabilidades descrita como: <strong>Controller &rarr; Service &rarr;
+                    Repository</strong>.
+            </p>
+            <p>
+                Para el desarrollo del ecosistema se empleará la plataforma <strong>C# con .NET</strong>, integrando
+                <strong>Dapper</strong> como micro-ORM ágil y optimizado para resolver la capa de persistencia y mapeo
+                relacional. Asimismo, se exigirá la obligatoriedad de implementar <strong>DTOs (Data Transfer
+                    Objects)</strong> para aislar el modelo de dominio interno de los contratos de entrada y salida
+                expuestos en la interfaz de comunicación HTTP. El control de los flujos de errores y excepciones de
+                negocio deberá centralizarse a través del componente nativo de infraestructura
+                <code>IExceptionHandler</code> de .NET.
+            </p>
+
+            <h2>Diagrama de Entidad-Relación (DER)</h2>
+            <p>
+                La persistencia subyacente de la aplicación se compone de tres entidades fundamentales normalizadas para
+                asegurar la integridad de datos y el flujo de stock:
+            </p>
+
+            <div class="der-container">
+                <svg class="der-svg" width="840" height="260" viewBox="0 0 840 260">
+                    <g transform="translate(10, 20)">
+                        <rect class="bg-table" x="0" y="0" width="220" height="110" rx="6" />
+                        <rect class="header-table" x="0" y="0" width="220" height="30" rx="6" />
+                        <rect class="header-table" x="0" y="20" width="220" height="10" />
+                        <text class="header-text-svg" x="12" y="20">Socios</text>
+
+                        <text class="pk-fk" x="12" y="55">PK</text>
+                        <text class="field-text" x="35" y="55">Id</text>
+                        <text class="field-type" x="150" y="55">INT</text>
+
+                        <text class="field-text" x="35" y="75">NombreCompleto</text>
+                        <text class="field-type" x="150" y="75">VARCHAR</text>
+
+                        <text class="field-text" x="35" y="95">Email</text>
+                        <text class="field-type" x="150" y="95">VARCHAR</text>
+                    </g>
+
+                    <g transform="translate(310, 20)">
+                        <rect class="bg-table" x="0" y="0" width="220" height="150" rx="6" />
+                        <rect class="header-table" x="0" y="0" width="220" height="30" rx="6" />
+                        <rect class="header-table" x="0" y="20" width="220" height="10" />
+                        <text class="header-text-svg" x="12" y="20">Prestamos</text>
+
+                        <text class="pk-fk" x="12" y="55">PK</text>
+                        <text class="field-text" x="35" y="55">Id</text>
+                        <text class="field-type" x="150" y="55">INT</text>
+
+                        <text class="pk-fk" x="12" y="75">FK</text>
+                        <text class="field-text" x="35" y="75">SocioId</text>
+                        <text class="field-type" x="150" y="75">INT</text>
+
+                        <text class="pk-fk" x="12" y="95">FK</text>
+                        <text class="field-text" x="35" y="95">LibroId</text>
+                        <text class="field-type" x="150" y="95">INT</text>
+
+                        <text class="field-text" x="35" y="115">FechaPrestamo</text>
+                        <text class="field-type" x="150" y="115">DATETIME</text>
+
+                        <text class="field-text" x="35" y="135">FechaDevolucion</text>
+                        <text class="field-type" x="150" y="135">DATETIME</text>
+                    </g>
+
+                    <g transform="translate(610, 20)">
+                        <rect class="bg-table" x="0" y="0" width="220" height="150" rx="6" />
+                        <rect class="header-table" x="0" y="0" width="220" height="30" rx="6" />
+                        <rect class="header-table" x="0" y="20" width="220" height="10" />
+                        <text class="header-text-svg" x="12" y="20">Libros</text>
+
+                        <text class="pk-fk" x="12" y="55">PK</text>
+                        <text class="field-text" x="35" y="55">Id</text>
+                        <text class="field-type" x="150" y="55">INT</text>
+
+                        <text class="field-text" x="35" y="75">Titulo</text>
+                        <text class="field-type" x="150" y="75">VARCHAR</text>
+
+                        <text class="field-text" x="35" y="95">Autor</text>
+                        <text class="field-type" x="150" y="95">VARCHAR</text>
+
+                        <text class="field-text" x="35" y="115">ISBN</text>
+                        <text class="field-type" x="150" y="115">VARCHAR</text>
+
+                        <text class="field-text" x="35" y="135">CantidadDisponible</text>
+                        <text class="field-type" x="150" y="135">INT</text>
+                    </g>
+
+                    <path class="line-rel" d="M 230 75 L 310 95" />
+                    <text class="line-text" x="240" y="70">1</text>
+                    <text class="line-text" x="295" y="90">*</text>
+
+                    <path class="line-rel" d="M 610 115 L 530 115" />
+                    <text class="line-text" x="595" y="110">1</text>
+                    <text class="line-text" x="540" y="110">*</text>
+                </svg>
+            </div>
+
+            <h2>DDL Sugerido (SQL Server)</h2>
+            <pre>
+CREATE TABLE Libros (
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Titulo VARCHAR(200) NOT NULL,
+    Autor VARCHAR(100) NOT NULL,
+    ISBN VARCHAR(20) NOT NULL UNIQUE,
+    CantidadDisponible INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE Socios (
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    NombreCompleto VARCHAR(150) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Prestamos (
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    SocioId INT NOT NULL FOREIGN KEY REFERENCES Socios(Id),
+    LibroId INT NOT NULL FOREIGN KEY REFERENCES Libros(Id),
+    FechaPrestamo DATETIME NOT NULL DEFAULT GETDATE(),
+    FechaDevolucion DATETIME NULL
+);</pre>
+
+            <h2>Endpoints a Implementar y Lógica de Capas</h2>
+            <p>
+                La implementación deberá estructurarse exponiendo taxativamente las siguientes operaciones en los
+                controladores. El controlador delegará la ejecución de reglas operativas de forma asíncrona mediante el
+                uso nativo de patrones basados en <code>Task</code> hacia los servicios lógicos.
+            </p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Verbo</th>
+                            <th>Ruta Endpoint</th>
+                            <th>DTO Entrada</th>
+                            <th>DTO Salida</th>
+                            <th>Lógica de Capas y Validaciones Críticas</th>
+                            <th>Estado e Intercepción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-post">POST</span></td>
+                            <td><span class="endpoint-path">/api/libros</span></td>
+                            <td>CrearLibroDto</td>
+                            <td>LibroDto (con Id)</td>
+                            <td>Valida que el identificador ISBN no se encuentre duplicado en el sistema de
+                                almacenamiento.</td>
+                            <td>ConflictException<br><strong>409 Conflict</strong></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-get">GET</span></td>
+                            <td><span class="endpoint-path">/api/libros</span></td>
+                            <td>Ninguno</td>
+                            <td>Lista&lt;LibroDto&gt;</td>
+                            <td>Retorna la totalidad de libros mapeados junto con su correspondiente stock actual.</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-get">GET</span></td>
+                            <td><span class="endpoint-path">/api/libros/{id}</span></td>
+                            <td>Ninguno</td>
+                            <td>LibroDto</td>
+                            <td>Resuelve y extrae el libro coincidente con el ID único suministrado por parámetro de
+                                URL.</td>
+                            <td>NotFoundException<br><strong>404 Not Found</strong></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-put">PUT</span></td>
+                            <td><span class="endpoint-path">/api/libros/{id}</span></td>
+                            <td>ModificarLibroDto</td>
+                            <td>LibroDto Modificado</td>
+                            <td>Valida la existencia material de la entidad. Si se actualiza el ISBN, audita que no
+                                colisione con terceras instancias.</td>
+                            <td>NotFoundException<br>ConflictException</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-delete">DELETE</span></td>
+                            <td><span class="endpoint-path">/api/libros/{id}</span></td>
+                            <td>Ninguno</td>
+                            <td>200 OK / 204 No Content</td>
+                            <td>Restringe y deniega la eliminación física si el libro en cuestión cuenta con registros
+                                de préstamos sin devolver.</td>
+                            <td>BadRequestException<br><strong>400 Bad Request</strong></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-post">POST</span></td>
+                            <td><span class="endpoint-path">/api/socios</span></td>
+                            <td>CrearSocioDto</td>
+                            <td>SocioDto (con Id)</td>
+                            <td>Garantiza la unicidad lógica del campo Email provisto durante el alta del nuevo socio
+                                activo.</td>
+                            <td>ConflictException<br><strong>409 Conflict</strong></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-get">GET</span></td>
+                            <td><span class="endpoint-path">/api/socios</span></td>
+                            <td>Ninguno</td>
+                            <td>Lista&lt;SocioDto&gt;</td>
+                            <td>Obtiene y expone la nómina completa de usuarios registrados dentro de la institución.
+                            </td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-post">POST</span></td>
+                            <td><span class="endpoint-path">/api/prestamos</span></td>
+                            <td>RegistrarPrestamoDto</td>
+                            <td>PrestamoDto (con Id)</td>
+                            <td>
+                                1. Verifica existencia transaccional de Socio y Libro.<br>
+                                2. Valida que el libro posea <code>CantidadDisponible > 0</code>.<br>
+                                3. Sustrae una unidad física de stock y asienta la estampa temporal
+                                <code>FechaPrestamo</code>.
+                            </td>
+                            <td>NotFoundException<br>BadRequestException<br><strong>400 / 404</strong></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-post">POST</span></td>
+                            <td><span class="endpoint-path">/api/prestamos/{id}/devolucion</span></td>
+                            <td>Ninguno</td>
+                            <td>PrestamoDto Modificado</td>
+                            <td>
+                                1. Valida existencia de la operación de préstamo.<br>
+                                2. Valida que el estado no sea previamente devuelto
+                                (<code>FechaDevolucion IS NULL</code>).<br>
+                                3. Incrementa el stock remanente del libro e inserta la <code>FechaDevolucion</code> del
+                                servidor.
+                            </td>
+                            <td>NotFoundException<br>BadRequestException<br><strong>400 / 404</strong></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-get">GET</span></td>
+                            <td><span class="endpoint-path">/api/prestamos</span></td>
+                            <td>Ninguno</td>
+                            <td>Lista&lt;PrestamoDetalleDto&gt;</td>
+                            <td>Compone y expone el historial unificado, ejecutando las uniones JOIN necesarias para
+                                resolver descriptivamente nombres de socios y títulos de obras.</td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Manejo Global de Excepciones (Middleware / Filter)</h2>
+            <div class="highlight-box">
+                <p><strong>Cláusula de Control Estricta:</strong> Se penalizará explícitamente el uso de bloques
+                    tradicionales de captura imperativa de excepciones (<code>try-catch</code>) embebidos dentro de las
+                    acciones o métodos de los controladores.</p>
+            </div>
+            <p>
+                Toda desviación operativa o regla de negocio insatisfecha en la capa de lógica interna deberá
+                interrumpir de forma inmediata el flujo procedimental mediante el lanzamiento controlado de excepciones
+                personalizadas fuertemente tipadas (por ejemplo: <code>StockInsuficienteException</code>,
+                <code>EntidadNoEncontradaException</code>).
+            </p>
+            <p>
+                El motor de infraestructura capturará las anomalías de manera agnóstica utilizando un pipeline
+                centralizado basado en la interfaz contractual <code>IExceptionHandler</code> de .NET Core. Este
+                componente automatizará el mapeo directo de las excepciones hacia los códigos de estado estandarizados
+                HTTP (400 Bad Request, 404 Not Found, 409 Conflict) envolviendo la respuesta final bajo el formato
+                semántico normativo <strong>ProblemDetails (RFC 7807)</strong>.
+            </p>
+        </main>
+
+        <footer>
+            Instituto Hilet - Material Pedagógico Exclusivo de Cátedra - Algoritmos III
+        </footer>
+    </div>
+
+    <script>
+        // Lógica de Persistencia y Conmutación de Temas
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else {
+                const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (userPrefersDark) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = 'light';
+            if (currentTheme === 'light') {
+                newTheme = 'dark';
+            }
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Inicializar inmediatamente al cargar el documento
+        initTheme();
+    </script>
+</body>
+
+</html>
