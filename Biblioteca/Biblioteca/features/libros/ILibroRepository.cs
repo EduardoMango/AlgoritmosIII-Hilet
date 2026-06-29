@@ -16,8 +16,8 @@ public interface ILibroRepository
 {
     Task<Libro?> GetByIdAsync(int id);
     Task<Libro?> GetByIsbnAsync(string isbn);
-    Task<IEnumerable<Libro>> GetAllAsync();
+    Task<IEnumerable<Libro>> GetAllAsync(LibroQueryFilter filtrado);
     Task<int> CreateAsync(Libro libro);
     Task UpdateAsync(Libro libro);
-    Task DeleteAsync(int id);
+    Task DeleteAsync(string isbn);
 }

@@ -19,6 +19,7 @@ public record CrearLibroDto(
     string Autor,
 
     [Required(ErrorMessage = "El ISBN es obligatorio")]
+    [Length(10,15, ErrorMessage = "El ISBN del Libro debe tener entre 10 y 15 caracteres")]
     string Isbn,
 
     [Range(0, int.MaxValue, ErrorMessage = "La cantidad disponible debe ser mayor o igual a cero")]

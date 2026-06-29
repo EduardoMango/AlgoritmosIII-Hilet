@@ -1,15 +1,4 @@
-using Biblioteca.Features.Libros;
 using Biblioteca.Features.Libros.Model;
-using Biblioteca.Features.Socios;
-using Biblioteca.Features.Socios.Model;
-using Biblioteca.Features.Prestamos;
-using Biblioteca.Features.Prestamos.Model;
-using Biblioteca.Features.Common.Exceptions;
-using Biblioteca.Features.Common.Infrastructure;
-
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 namespace Biblioteca.Features.Libros;
 
@@ -22,31 +11,40 @@ public static class LibroEndpoints
         group.MapPost("/", async (CrearLibroDto dto, ILibroService service) =>
         {
             var result = await service.CreateAsync(dto);
-            return Results.Created($"/api/libros/{result.Id}", result);
+            return TypedResults.Created($"/api/libros/{result.Isbn}", result);
         });
 
-        group.MapGet("/", async (ILibroService service) =>
+        group.MapGet("/", async ( HttpContext context,
+            [AsParameters] LibroQueryFilter filtrado, 
+            ILibroService service) =>
         {
-            var result = await service.GetAllAsync();
-            return Results.Ok(result);
+            var result = await service.GetAllAsync(filtrado);
+            
+            //Encabezado para cachear los resultados
+            context.Response.Headers.CacheControl = "public, max-age=60";
+            
+            return TypedResults.Ok(result);
         });
 
-        group.MapGet("/{id:int}", async (int id, ILibroService service) =>
+        group.MapGet("/{isbn:length(10,15)}", async (string isbn, ILibroService service) =>
         {
-            var result = await service.GetByIdAsync(id);
-            return Results.Ok(result);
+            var result = await service.GetByIsbnAsync(isbn);
+            return TypedResults.Ok(result);
+        });
+        
+        // group.MapGet("/{isbn:length(16,20)}", async (string isbn, ILibroService service) => 
+        //     TypedResults.Ok("Te pasaste de caracteres capo"));
+
+        group.MapPut("/{isbn:length(10,15)}", async (string isbn, ModificarLibroDto dto, ILibroService service) =>
+        {
+            var result = await service.UpdateAsync(isbn, dto);
+            return TypedResults.Ok(result);
         });
 
-        group.MapPut("/{id:int}", async (int id, ModificarLibroDto dto, ILibroService service) =>
+        group.MapDelete("/{isbn:length(10,15)}", async (string isbn, ILibroService service) =>
         {
-            var result = await service.UpdateAsync(id, dto);
-            return Results.Ok(result);
-        });
-
-        group.MapDelete("/{id:int}", async (int id, ILibroService service) =>
-        {
-            await service.DeleteAsync(id);
-            return Results.NoContent();
+            await service.DeleteAsync(isbn);
+            return TypedResults.NoContent();
         });
     }
 }

@@ -15,6 +15,6 @@ public record RegistrarPrestamoDto(
     [Required(ErrorMessage = "El ID del socio es obligatorio")]
     int SocioId,
 
-    [Required(ErrorMessage = "El ID del libro es obligatorio")]
-    int LibroId
+    [Required(ErrorMessage = "El Isbn del libro es obligatorio")]
+    string LibroIsbn
 );

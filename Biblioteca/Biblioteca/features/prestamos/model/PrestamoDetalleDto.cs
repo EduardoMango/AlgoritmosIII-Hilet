@@ -15,7 +15,7 @@ public record PrestamoDetalleDto(
     int Id,
     int SocioId,
     string SocioNombre,
-    int LibroId,
+    string LibroIsbn,
     string LibroTitulo,
     DateTime FechaPrestamo,
     DateTime? FechaDevolucion

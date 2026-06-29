@@ -36,10 +36,51 @@ public class LibroRepository : ILibroRepository
         return await _connection.QueryFirstOrDefaultAsync<Libro>(query, new { Isbn = isbn });
     }
 
-    public async Task<IEnumerable<Libro>> GetAllAsync()
+    public async Task<IEnumerable<Libro>> GetAllAsync(LibroQueryFilter filter)
     {
-        var query = "SELECT Id, Titulo, Autor, ISBN as Isbn, CantidadDisponible FROM Libros";
-        return await _connection.QueryAsync<Libro>(query);
+        var where = new List<string>();
+        var parameters = new DynamicParameters();
+
+        if (!string.IsNullOrWhiteSpace(filter.Titulo))
+        {
+            where.Add("Titulo LIKE @Titulo");
+            parameters.Add("Titulo", $"%{filter.Titulo}%");
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Autor))
+        {
+            where.Add("Autor LIKE @Autor");
+            parameters.Add("Autor", $"%{filter.Autor}%");
+        }
+
+        if (filter.CantidadMin.HasValue)
+        {
+            where.Add("CantidadDisponible >= @CantidadMin");
+            parameters.Add("CantidadMin", filter.CantidadMin);
+        }
+
+        if (filter.CantidadMax.HasValue)
+        {
+            where.Add("CantidadDisponible <= @CantidadMax");
+            parameters.Add("CantidadMax", filter.CantidadMax);
+        }
+
+        var query = """
+
+                            SELECT Id,
+                                   Titulo,
+                                   Autor,
+                                   ISBN AS Isbn,
+                                   CantidadDisponible
+                            FROM Libros
+                    """;
+
+        if (where.Any())
+        {
+            query += " WHERE " + string.Join(" AND ", where);
+        }
+
+        return await _connection.QueryAsync<Libro>(query, parameters);
     }
 
     public async Task<int> CreateAsync(Libro libro)
@@ -58,9 +99,9 @@ public class LibroRepository : ILibroRepository
         await _connection.ExecuteAsync(query, libro);
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(string isbn)
     {
-        var query = "DELETE FROM Libros WHERE Id = @Id";
-        await _connection.ExecuteAsync(query, new { Id = id });
+        var query = "DELETE FROM Libros WHERE ISBN = @Isbn";
+        await _connection.ExecuteAsync(query, new { Isbn = isbn });
     }
 }

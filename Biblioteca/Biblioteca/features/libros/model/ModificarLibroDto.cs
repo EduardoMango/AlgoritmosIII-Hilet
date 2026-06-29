@@ -18,9 +18,6 @@ public record ModificarLibroDto(
     [Required(ErrorMessage = "El autor es obligatorio")]
     string Autor,
 
-    [Required(ErrorMessage = "El ISBN es obligatorio")]
-    string Isbn,
-
     [Range(0, int.MaxValue, ErrorMessage = "La cantidad disponible debe ser mayor o igual a cero")]
     int CantidadDisponible
 );

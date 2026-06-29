@@ -22,19 +22,19 @@ public static class PrestamoEndpoints
         group.MapPost("/", async (RegistrarPrestamoDto dto, IPrestamoService service) =>
         {
             var result = await service.CreateAsync(dto);
-            return Results.Created($"/api/prestamos/{result.Id}", result);
+            return TypedResults.Created($"/api/prestamos/{result.Id}", result);
         });
 
         group.MapPost("/{id:int}/devolucion", async (int id, IPrestamoService service) =>
         {
             var result = await service.ReturnAsync(id);
-            return Results.Ok(result);
+            return TypedResults.Ok(result);
         });
 
         group.MapGet("/", async (IPrestamoService service) =>
         {
             var result = await service.GetAllAsync();
-            return Results.Ok(result);
+            return TypedResults.Ok(result);
         });
     }
 }

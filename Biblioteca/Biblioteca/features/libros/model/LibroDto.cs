@@ -10,7 +10,6 @@ using Biblioteca.Features.Common.Infrastructure;
 namespace Biblioteca.Features.Libros.Model;
 
 public record LibroDto(
-    int Id,
     string Titulo,
     string Autor,
     string Isbn,

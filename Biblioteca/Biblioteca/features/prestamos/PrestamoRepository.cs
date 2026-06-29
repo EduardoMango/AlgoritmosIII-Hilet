@@ -36,7 +36,7 @@ public class PrestamoRepository : IPrestamoRepository
                         p.Id, 
                         p.SocioId, 
                         s.NombreCompleto as SocioNombre, 
-                        p.LibroId, 
+                        l.ISBN as LibroIsbn, 
                         l.Titulo as LibroTitulo, 
                         p.FechaPrestamo, 
                         p.FechaDevolucion 

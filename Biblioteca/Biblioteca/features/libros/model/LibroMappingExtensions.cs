@@ -16,13 +16,13 @@ public static class LibroMappingExtensions
         return new Libro(0, dto.Titulo, dto.Autor, dto.Isbn, dto.CantidadDisponible);
     }
 
-    public static Libro ToEntity(this ModificarLibroDto dto, int id)
+    public static Libro ToEntity(this ModificarLibroDto dto, int id, string isbn)
     {
-        return new Libro(id, dto.Titulo, dto.Autor, dto.Isbn, dto.CantidadDisponible);
+        return new Libro(id, dto.Titulo, dto.Autor, isbn, dto.CantidadDisponible);
     }
 
     public static LibroDto ToResponse(this Libro entity)
     {
-        return new LibroDto(entity.Id, entity.Titulo, entity.Autor, entity.Isbn, entity.CantidadDisponible);
+        return new LibroDto(entity.Titulo, entity.Autor, entity.Isbn, entity.CantidadDisponible);
     }
 }

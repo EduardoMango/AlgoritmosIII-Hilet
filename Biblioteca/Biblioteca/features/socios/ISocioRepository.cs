@@ -16,6 +16,6 @@ public interface ISocioRepository
 {
     Task<SocioEntity?> GetByIdAsync(int id);
     Task<SocioEntity?> GetByEmailAsync(string email);
-    Task<IEnumerable<SocioEntity>> GetAllAsync();
+    Task<IEnumerable<SocioEntity>> GetAllAsync(string? nombre);
     Task<int> CreateAsync(SocioEntity socioEntity);
 }

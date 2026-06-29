@@ -22,9 +22,9 @@ public class SocioService : ISocioService
         _socioRepository = socioRepository;
     }
 
-    public async Task<IEnumerable<SocioDto>> GetAllAsync()
+    public async Task<IEnumerable<SocioDto>> GetAllAsync(string? nombre)
     {
-        var socios = await _socioRepository.GetAllAsync();
+        var socios = await _socioRepository.GetAllAsync(nombre);
         return socios.Select(s => s.ToResponse());
     }
 

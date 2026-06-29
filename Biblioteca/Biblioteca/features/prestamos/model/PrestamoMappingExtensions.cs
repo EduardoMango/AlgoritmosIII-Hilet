@@ -13,9 +13,9 @@ namespace Biblioteca.Features.Prestamos.Model;
 
 public static class PrestamoMappingExtensions
 {
-    public static Prestamo ToEntity(this RegistrarPrestamoDto dto)
+    public static Prestamo ToEntity(this RegistrarPrestamoDto dto, int id)
     {
-        return new Prestamo(0, dto.SocioId, dto.LibroId, DateTime.UtcNow, null);
+        return new Prestamo(0, dto.SocioId, id, DateTime.UtcNow, null);
     }
 
     public static PrestamoDto ToResponse(this Prestamo entity)

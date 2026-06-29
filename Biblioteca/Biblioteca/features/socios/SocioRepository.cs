@@ -36,10 +36,18 @@ public class SocioRepository : ISocioRepository
         return await _connection.QueryFirstOrDefaultAsync<SocioEntity>(query, new { Email = email });
     }
 
-    public async Task<IEnumerable<SocioEntity>> GetAllAsync()
+    public async Task<IEnumerable<SocioEntity>> GetAllAsync(string? nombre)
     {
         var query = "SELECT Id, NombreCompleto, Email FROM Socios";
-        return await _connection.QueryAsync<SocioEntity>(query);
+        var parameters = new DynamicParameters();
+
+        if (!string.IsNullOrWhiteSpace(nombre))
+        {
+            query += " WHERE NombreCompleto LIKE @Nombre";
+            parameters.Add("Nombre", $"%{nombre}%");
+        }
+
+        return await _connection.QueryAsync<SocioEntity>(query, parameters);
     }
 
     public async Task<int> CreateAsync(SocioEntity socioEntity)

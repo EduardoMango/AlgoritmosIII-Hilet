@@ -14,6 +14,6 @@ namespace Biblioteca.Features.Socios;
 
 public interface ISocioService
 {
-    Task<IEnumerable<SocioDto>> GetAllAsync();
+    Task<IEnumerable<SocioDto>> GetAllAsync(string? nombre);
     Task<SocioDto> CreateAsync(CrearSocioDto dto);
 }

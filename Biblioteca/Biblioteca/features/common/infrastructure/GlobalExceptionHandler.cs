@@ -47,7 +47,8 @@ public class GlobalExceptionHandler : IExceptionHandler
                 problemDetails.Status = StatusCodes.Status409Conflict;
                 problemDetails.Title = "Conflicto";
                 break;
-            case BadRequestException:
+            case BadRequestException :
+            case BadHttpRequestException:
                 problemDetails.Status = StatusCodes.Status400BadRequest;
                 problemDetails.Title = "Solicitud incorrecta";
                 break;

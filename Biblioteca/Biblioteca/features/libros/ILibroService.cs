@@ -14,9 +14,9 @@ namespace Biblioteca.Features.Libros;
 
 public interface ILibroService
 {
-    Task<IEnumerable<LibroDto>> GetAllAsync();
-    Task<LibroDto> GetByIdAsync(int id);
+    Task<IEnumerable<LibroDto>> GetAllAsync(LibroQueryFilter filtrado);
+    Task<LibroDto> GetByIsbnAsync(string isbn);
     Task<LibroDto> CreateAsync(CrearLibroDto dto);
-    Task<LibroDto> UpdateAsync(int id, ModificarLibroDto dto);
-    Task DeleteAsync(int id);
+    Task<LibroDto> UpdateAsync(string isbn, ModificarLibroDto dto);
+    Task DeleteAsync(string isbn);
 }

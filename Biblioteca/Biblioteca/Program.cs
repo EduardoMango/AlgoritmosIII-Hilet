@@ -3,7 +3,7 @@ using Biblioteca.Features.Socios;
 using Biblioteca.Features.Prestamos;
 using Biblioteca.Features.Common.Infrastructure;
 using System.Data;
-using Npgsql;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +19,7 @@ builder.Services.AddProblemDetails();
 
 // Register Repositories
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
-builder.Services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(connectionString));
+builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connectionString));
 
 builder.Services.AddScoped<ILibroRepository, LibroRepository>();
 builder.Services.AddScoped<ISocioRepository, SocioRepository>();

@@ -22,13 +22,13 @@ public static class SocioEndpoints
         group.MapPost("/", async (CrearSocioDto dto, ISocioService service) =>
         {
             var result = await service.CreateAsync(dto);
-            return Results.Created($"/api/socios/{result.Id}", result);
+            return TypedResults.Created($"/api/socios/{result.Id}", result);
         });
 
-        group.MapGet("/", async (ISocioService service) =>
+        group.MapGet("/", async (string? nombre,ISocioService service) =>
         {
-            var result = await service.GetAllAsync();
-            return Results.Ok(result);
+            var result = await service.GetAllAsync(nombre);
+            return TypedResults.Ok(result);
         });
     }
 }

@@ -40,14 +40,14 @@ public class PrestamoService : IPrestamoService
         if (socio == null)
             throw new NotFoundException($"No se encontro el socio con id {dto.SocioId}");
 
-        var libro = await _libroRepository.GetByIdAsync(dto.LibroId);
+        var libro = await _libroRepository.GetByIsbnAsync(dto.LibroIsbn);
         if (libro == null)
-            throw new NotFoundException($"No se encontro el libro con id {dto.LibroId}");
+            throw new NotFoundException($"No se encontro el libro con ISBN {dto.LibroIsbn}");
 
         if (libro.CantidadDisponible <= 0)
             throw new BadRequestException("El libro no posee stock disponible para prestar");
 
-        var prestamo = dto.ToEntity();
+        var prestamo = dto.ToEntity(libro.Id);
 
         // Sustrae el stock y actualiza
         var updatedLibro = libro with { CantidadDisponible = libro.CantidadDisponible - 1 };
