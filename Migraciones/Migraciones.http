@@ -1,0 +1,6 @@
+@Migraciones_HostAddress = http://localhost:5220
+
+GET {{Migraciones_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
