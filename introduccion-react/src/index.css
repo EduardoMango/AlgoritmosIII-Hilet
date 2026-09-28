@@ -1,0 +1,85 @@
+/* ==========================================================================
+   VARIABLES DE DISEÑO Y RESET GLOBAL (Cátedra de Gestión de Desarrollo)
+   ========================================================================== */
+
+:root {
+  --primary: #25435D;
+  --primary-dark: #1B3247;
+  --primary-light: #2C5E8A;
+  --secondary: #35536F;
+  --secondary-light: #527394;
+  --accent: #5A94D0;
+  --accent-light: #82B2E4;
+  --accent-bg: rgba(90, 148, 208, 0.12);
+
+  --background: #F8FAFC;
+  --surface: #FFFFFF;
+  --surface-alt: #F1F5F9;
+  --surface-hover: #E2E8F0;
+
+  --text-color: #1E293B;
+  --text-muted: #64748B;
+  --text-light: #475569;
+
+  --border: #CBD5E1;
+  --border-light: #E2E8F0;
+  --border-dark: #94A3B8;
+
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --success-border: #059669;
+  --success-text: #065F46;
+
+  --danger: #EF4444;
+  --danger-bg: #FEF2F2;
+  --danger-border: #DC2626;
+  --danger-text: #991B1B;
+
+  --warning: #F59E0B;
+  --warning-bg: #FFFBEB;
+  --warning-border: #D97706;
+  --warning-text: #92400E;
+
+  --code-bg: #0F172A;
+  --code-text: #E2E8F0;
+  --code-border: #334155;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, Monaco, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--background);
+  color: var(--text-color);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
