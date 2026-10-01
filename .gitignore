@@ -6,3 +6,10 @@ obj/
 *.user
 *.suo
 *.cache
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.DS_Store
