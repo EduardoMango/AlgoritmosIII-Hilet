@@ -1,0 +1,54 @@
+{
+  "libros": [
+    {
+      "id": "1",
+      "titulo": "Cien años de soledad",
+      "autor": "Gabriel García Márquez",
+      "genero": "Novela / Realismo Mágico",
+      "disponible": true
+    },
+    {
+      "id": "2",
+      "titulo": "Clean Code",
+      "autor": "Robert C. Martin",
+      "genero": "Ingeniería de Software",
+      "disponible": false
+    },
+    {
+      "id": "3",
+      "titulo": "El Aleph",
+      "autor": "Jorge Luis Borges",
+      "genero": "Ficción / Cuentos",
+      "disponible": false
+    },
+    {
+      "id": "4",
+      "titulo": "Design Patterns",
+      "autor": "Gang of Four (GoF)",
+      "genero": "Arquitectura de Software",
+      "disponible": true
+    },
+    {
+      "id": "6",
+      "titulo": "Rayuela",
+      "autor": "Julio Cortázar",
+      "genero": "Novela / Ficción",
+      "disponible": false
+    },
+    {
+      "titulo": "Lord of the rings",
+      "autor": "Tolkien",
+      "genero": "Novela / Ficción",
+      "disponible": true,
+      "id": "frO358ek5jU"
+    },
+    {
+      "titulo": "Test",
+      "autor": "Test",
+      "genero": "Programación",
+      "disponible": true,
+      "id": "1qB_ihM1lws"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

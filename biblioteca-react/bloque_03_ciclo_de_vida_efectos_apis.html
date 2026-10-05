@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloque 3: Ciclo de Vida, Efectos Secundarios y APIs - Algoritmos III</title>
+
+    <!-- Prism.js Sintaxis Highlighting CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ini.min.js" defer></script>
+
+    <!-- Prevención de parpadeo de tema (Anti-flicker script) -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark-pending');
+            }
+        })();
+    </script>
+
+    <style>
+/* ==========================================================================
+   PLANTILLA DE ESTILOS CSS GLOBAL Y ESCALABLE PARA APUNTES ACADÉMICOS
+   Cátedra: Gestión de Desarrollo de Software / Algoritmos III
+   --------------------------------------------------------------------------
+   REGLAS DE DISEÑO Y MANTENIMIENTO:
+   1. SISTEMA 100% BASADO EN VARIABLES: Ningún componente posee colores 
+      hardcodeados. Todos los colores, fondos, bordes y sombras deben 
+      referenciar estrictamente variables definidas en :root o body.dark.
+   2. SOPORTE DE MODO CLARO Y OSCURO: Todos los componentes responden 
+      automáticamente al toggle de la clase .dark en la etiqueta <body>.
+   3. ACCESIBILIDAD UNIVERSAL (WCAG 2.1 AA / AAA): Alto contraste cromático,
+      anillos de enfoque visibles, enlaces accesibles y áreas mínimas de toque.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. SISTEMA DE VARIABLES DE DISEÑO (DESIGN TOKENS)
+   ========================================================================== */
+
+:root {
+    /* --- Paleta Principal (Modo Claro - Ajustada WCAG 2.1 AAA) --- */
+    --primary: #25435D;
+    --primary-dark: #1B3247;
+    --primary-light: #2C5E8A;
+    --secondary: #35536F;
+    --secondary-light: #527394;
+    --accent: #5A94D0;
+    --accent-light: #82B2E4;
+    --accent-bg: rgba(90, 148, 208, 0.12);
+
+    /* --- Enlaces Interactivos (WCAG 2.1 AAA Contrast >= 7:1) --- */
+    --link-color: #1F5A92;
+    --link-hover-color: #133E68;
+
+    /* --- Fondos y Superficies --- */
+    --background: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-alt: #F5F7FA;
+    --surface-hover: #EBF0F5;
+
+    /* --- Tipografía --- */
+    --text: #1D2A35;
+    --text-light: #4A5568;
+    --text-muted: #5F6B75;
+    --text-on-primary: #FFFFFF;
+    --text-on-accent: #1D2A35;
+
+    /* --- Bordes --- */
+    --border: #D8E0E8;
+    --border-light: #EBF0F5;
+    --border-dark: #B8C4CF;
+
+    /* --- Estados y Bloques Destacados (WCAG Contrast Ratio > 7:1) --- */
+    --warning-bg: #FFF8E6;
+    --warning-border: #F4B400;
+    --warning-text: #7A5200;
+    --warning-icon: #F4B400;
+
+    --danger-bg: #FDEDED;
+    --danger-border: #D93025;
+    --danger-text: #9A1C14;
+    --danger-icon: #D93025;
+
+    --success-bg: #E6F4EA;
+    --success-border: #137333;
+    --success-text: #0D5224;
+    --success-icon: #137333;
+
+    --note-bg: rgba(90, 148, 208, 0.12);
+    --note-border: #35536F;
+    --note-text: #1D2A35;
+    --note-icon: #35536F;
+
+    --concept-bg: #F5F7FA;
+    --concept-border: #5A94D0;
+    --concept-text: #1D2A35;
+    --concept-icon: #5A94D0;
+
+    --info-bg: #EBF3FA;
+    --info-border: #25435D;
+    --info-text: #1D2A35;
+    --info-icon: #25435D;
+
+    /* --- Código e Resaltado de Sintaxis (Prism Tokens) --- */
+    --inline-code-bg: #F5F7FA;
+    --inline-code-text: #1F5A92;
+    --inline-code-border: #D8E0E8;
+
+    --code-block-bg: #1E252D;
+    --code-block-text: #E8EDF2;
+    --code-block-border: #324250;
+    --code-block-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+    --token-keyword: #FF7B72;
+    --token-class: #79C0FF;
+    --token-function: #D2A8FF;
+    --token-string: #A5D6A7;
+    --token-punctuation: #CFD8DC;
+    --token-comment: #9DA8B3;
+    --token-operator: #89DDFF;
+    --token-number: #FF9D7A;
+    --token-boolean: #FF7B72;
+    --token-tag: #FF7B72;
+    --token-attribute: #79C0FF;
+
+    /* --- Interruptor de Tema (Switch Toggle) --- */
+    --switch-bg: #EBF0F5;
+    --switch-bg-checked: #090D16;
+    --switch-handle-bg: #FFFFFF;
+    --switch-handle-checked: #2B364E;
+    --switch-handle-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --switch-icon-sun: #1D2A35;
+    --switch-icon-sun-checked: #5F6B75;
+    --switch-icon-moon: #A0AEC0;
+    --switch-icon-moon-checked: #FFFFFF;
+
+    /* --- Botón Alternativo de Tema --- */
+    --btn-bg: var(--surface-alt);
+    --btn-text: var(--text);
+    --btn-border: var(--border);
+    --btn-hover-bg: var(--surface-hover);
+    --btn-hover-text: var(--primary);
+
+    /* --- Sombras --- */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-toggle: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+    /* --- Bordes Redondeados --- */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-full: 9999px;
+
+    /* --- Dimensiones de Estructura --- */
+    --sidebar-width: 250px;
+    --container-max-width: 900px;
+
+    /* --- Tipografías --- */
+    --font-sans: 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: Consolas, 'JetBrains Mono', 'Cascadia Code', Monaco, monospace;
+}
+
+/* ==========================================================================
+   2. TEMA OSCURO (BODY.DARK - WCAG AAA CONTRASTE)
+   ========================================================================== */
+
+body.dark {
+    /* --- Paleta Principal (Modo Oscuro - Contraste Elevado >= 8:1) --- */
+    --primary: #8EBFEC;
+    --primary-dark: #25435D;
+    --primary-light: #B4D7FA;
+    --secondary: #A4CCF4;
+    --secondary-light: #C8E2FC;
+    --accent: #9BC3EA;
+    --accent-light: #C2DCF5;
+    --accent-bg: rgba(155, 195, 234, 0.15);
+
+    /* --- Enlaces Interactivos en Modo Oscuro --- */
+    --link-color: #A0CAF5;
+    --link-hover-color: #C2E0FF;
+
+    /* --- Fondos y Superficies --- */
+    --background: #12181F;
+    --surface: #17202A;
+    --surface-alt: #1C2530;
+    --surface-hover: #253242;
+
+    /* --- Tipografía --- */
+    --text: #E8EDF2;
+    --text-light: #CFD8DC;
+    --text-muted: #B8C4CF;
+    --text-on-primary: #12181F;
+    --text-on-accent: #12181F;
+
+    /* --- Bordes --- */
+    --border: #324250;
+    --border-light: #22303C;
+    --border-dark: #455A6F;
+
+    /* --- Estados y Bloques Destacados (Modo Oscuro) --- */
+    --warning-bg: #2D230A;
+    --warning-border: #F4B400;
+    --warning-text: #FBE089;
+    --warning-icon: #F4B400;
+
+    --danger-bg: #3A1F22;
+    --danger-border: #FF6B6B;
+    --danger-text: #FFB4B4;
+    --danger-icon: #FF6B6B;
+
+    --success-bg: #152E21;
+    --success-border: #81C784;
+    --success-text: #A5D6A7;
+    --success-icon: #81C784;
+
+    --note-bg: rgba(155, 195, 234, 0.15);
+    --note-border: #9BC3EA;
+    --note-text: #E8EDF2;
+    --note-icon: #9BC3EA;
+
+    --concept-bg: #1C2530;
+    --concept-border: #9BC3EA;
+    --concept-text: #E8EDF2;
+    --concept-icon: #9BC3EA;
+
+    --info-bg: #1B2B3A;
+    --info-border: #8EBFEC;
+    --info-text: #E8EDF2;
+    --info-icon: #9BC3EA;
+
+    /* --- Código e Resaltado de Sintaxis (Modo Oscuro) --- */
+    --inline-code-bg: #1C2530;
+    --inline-code-text: #A0CAF5;
+    --inline-code-border: #324250;
+
+    --code-block-bg: #141A21;
+    --code-block-text: #E8EDF2;
+    --code-block-border: #324250;
+    --code-block-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    --token-keyword: #FF7B72;
+    --token-class: #79C0FF;
+    --token-function: #D2A8FF;
+    --token-string: #A5D6A7;
+    --token-punctuation: #CFD8DC;
+    --token-comment: #9DA8B3;
+    --token-operator: #89DDFF;
+    --token-number: #FF9D7A;
+    --token-boolean: #FF7B72;
+    --token-tag: #FF7B72;
+    --token-attribute: #79C0FF;
+
+    /* --- Interruptor de Tema --- */
+    --switch-bg: #090D16;
+    --switch-bg-checked: #090D16;
+    --switch-handle-bg: #2B364E;
+    --switch-handle-checked: #2B364E;
+    --switch-handle-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --switch-icon-sun: #5F6B75;
+    --switch-icon-sun-checked: #5F6B75;
+    --switch-icon-moon: #FFFFFF;
+    --switch-icon-moon-checked: #FFFFFF;
+
+    /* --- Sombras (Modo Oscuro) --- */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-toggle: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   3. RESET GENERAL Y TIPOGRAFÍA BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.7;
+    background-color: var(--background);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@page {
+    size: A4;
+    margin: 20mm;
+    background-color: var(--background);
+}
+
+/* Enlace directo para saltar al contenido (Bypass Blocks - WCAG 2.4.1) */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 20px;
+    background-color: var(--primary);
+    color: #FFFFFF;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    z-index: 2000;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: var(--shadow-md);
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 20px;
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Utilidad para lectores de pantalla (Screen Reader Only) */
+.sr-only,
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* ==========================================================================
+   4. ESTRUCTURA Y CONTENEDORES
+   ========================================================================== */
+
+.container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 20px 24px;
+    width: 100%;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding: 10px 0;
+}
+
+/* ==========================================================================
+   5. CABECERA INSTITUCIONAL
+   ========================================================================== */
+
+.institutional-header,
+.inst-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid var(--primary);
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.institutional-info,
+.inst-info {
+    flex-grow: 1;
+}
+
+.institutional-info h3,
+.inst-info h3,
+.inst-info .univ-name {
+    margin: 0;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.institutional-info p,
+.inst-info p {
+    margin: 4px 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.logo-box {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.logo-box .logo-svg {
+    height: 65px;
+    width: auto;
+    color: var(--text);
+    transition: color 0.3s ease;
+}
+
+/* ==========================================================================
+   6. CONTROL DE TEMA (SWITCH Y BOTÓN DE TOGGLE)
+   ========================================================================== */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 76px;
+    height: 40px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.switch .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--switch-bg);
+    border-radius: var(--radius-full);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+}
+
+.switch .slider::before {
+    content: "";
+    position: absolute;
+    height: 32px;
+    width: 32px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--switch-handle-bg);
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    z-index: 1;
+    box-shadow: var(--switch-handle-shadow);
+}
+
+.switch .icon {
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.switch .icon.sun {
+    color: var(--switch-icon-sun);
+    margin-left: 2px;
+}
+
+.switch .icon.moon {
+    color: var(--switch-icon-moon);
+    margin-right: 2px;
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(36px);
+    background-color: var(--switch-handle-checked);
+}
+
+.switch input:checked + .slider {
+    background-color: var(--switch-bg-checked);
+}
+
+.switch input:checked + .slider .icon.sun {
+    color: var(--switch-icon-sun-checked);
+}
+
+.switch input:checked + .slider .icon.moon {
+    color: var(--switch-icon-moon-checked);
+}
+
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+.theme-btn {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: 1px solid var(--btn-border);
+    padding: 8px 16px;
+    min-height: 40px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-btn:hover {
+    background-color: var(--surface-hover);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* ==========================================================================
+   7. BANNER PRINCIPAL (MAIN / HEADER BANNER)
+   ========================================================================== */
+
+.main-banner,
+.header-banner {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+    padding: 28px 32px;
+    border-left: 8px solid var(--accent);
+    border-radius: var(--radius-lg);
+    margin-bottom: 35px;
+    box-shadow: var(--shadow-sm);
+}
+
+.main-banner h1,
+.header-banner h1 {
+    font-size: 26px;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+    color: var(--text-on-primary);
+}
+
+.main-banner p,
+.header-banner p {
+    margin: 8px 0 0 0;
+    color: var(--text-on-primary);
+    opacity: 0.95;
+    font-size: 15px;
+}
+
+/* ==========================================================================
+   8. ENCABEZADOS Y ELEMENTOS DE TEXTO
+   ========================================================================== */
+
+h1 {
+    font-size: 26px;
+    color: var(--primary);
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+h2 {
+    font-size: 22px;
+    color: var(--primary);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 8px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+h3 {
+    font-size: 18px;
+    color: var(--secondary);
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+h4 {
+    font-size: 16px;
+    color: var(--text);
+    margin-top: 25px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+p, ul, ol {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+ul, ol {
+    padding-left: 25px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+strong, b {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+body.dark strong,
+body.dark b {
+    color: var(--primary-light);
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 30px 0;
+}
+
+/* ==========================================================================
+   9. CONTENEDORES DESTACADOS Y CALLOUTS (REUTILIZABLES Y CONFIGURABLES)
+   ========================================================================== */
+
+.concept-box,
+.callout-concept {
+    background-color: var(--concept-bg);
+    border-left: 5px solid var(--concept-border);
+    color: var(--concept-text);
+    padding: 16px 20px;
+    margin: 25px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.warning-box,
+.callout-warning {
+    background-color: var(--warning-bg);
+    border-left: 5px solid var(--warning-border);
+    color: var(--warning-text);
+    padding: 16px 20px;
+    margin: 25px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.error-box,
+.alert-box,
+.callout-danger,
+.callout-error {
+    background-color: var(--danger-bg);
+    border-left: 5px solid var(--danger-border);
+    color: var(--danger-text);
+    padding: 16px 20px;
+    margin: 25px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.note-box,
+.callout-note {
+    background-color: var(--note-bg);
+    border-left: 5px solid var(--note-border);
+    color: var(--note-text);
+    padding: 16px 20px;
+    margin: 25px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.highlight-box,
+.callout-info,
+.callout-highlight {
+    background-color: var(--info-bg);
+    border-left: 5px solid var(--info-border);
+    color: var(--info-text);
+    padding: 16px 20px;
+    margin: 25px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.callout {
+    background-color: var(--surface-alt);
+    border-left: 5px solid var(--accent);
+    color: var(--text);
+    padding: 16px 20px;
+    margin: 25px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.concept-box strong, .callout-concept strong,
+.warning-box strong, .callout-warning strong,
+.error-box strong, .alert-box strong, .callout-danger strong,
+.note-box strong, .callout-note strong,
+.highlight-box strong, .callout-info strong, .callout strong {
+    color: inherit;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+/* ==========================================================================
+   10. DIAGRAMAS Y FLUJOGRAMAS
+   ========================================================================== */
+
+.flow-container,
+.diagram-container,
+.diagram {
+    background-color: var(--surface-alt);
+    border: 1px solid var(--border);
+    padding: 22px;
+    margin: 25px 0;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.5;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.flow-arrow {
+    color: var(--primary);
+    font-weight: bold;
+    margin: 6px 0;
+    font-size: 16px;
+}
+
+.flow-node {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: inline-block;
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    margin: 4px;
+    box-shadow: var(--shadow-sm);
+}
+
+.flow-node.highlight {
+    background-color: var(--primary);
+    color: #FFFFFF;
+    border-color: var(--primary-dark);
+}
+
+.diagram-container svg,
+.diagram svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    text-rendering: optimizeLegibility;
+}
+
+.diagram-title {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.diagram-legend {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    text-align: center;
+}
+
+/* ==========================================================================
+   11. TABLAS DATOS
+   ========================================================================== */
+
+.table-container {
+    overflow-x: auto;
+    margin: 25px 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+    font-size: 14.5px;
+    background-color: var(--surface);
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border: 1px solid var(--border);
+}
+
+th {
+    background-color: var(--surface-alt);
+    color: var(--primary);
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+}
+
+tr:nth-child(even) {
+    background-color: var(--surface-alt);
+}
+
+tr:hover {
+    background-color: var(--surface-hover);
+}
+
+/* ==========================================================================
+   12. BLOQUES DE CÓDIGO Y SINTAXIS (PRISM.JS INTEGRACIÓN)
+   ========================================================================== */
+
+:not(pre) > code,
+p > code,
+li > code,
+td > code {
+    background-color: var(--inline-code-bg);
+    color: var(--inline-code-text);
+    border: 1px solid var(--inline-code-border);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-block;
+    margin: 0 2px;
+    vertical-align: baseline;
+}
+
+.code-container {
+    margin: 25px 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--code-block-shadow);
+    border: 1px solid var(--code-block-border);
+}
+
+pre[class*="language-"] {
+    background: var(--code-block-bg) !important;
+    color: var(--code-block-text) !important;
+    font-family: var(--font-mono) !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    padding: 20px !important;
+    border-radius: var(--radius-lg) !important;
+    margin: 25px 0 !important;
+    border: 1px solid var(--code-block-border) !important;
+    box-shadow: var(--code-block-shadow);
+    overflow-x: auto;
+    tab-size: 4;
+}
+
+code[class*="language-"] {
+    font-family: var(--font-mono) !important;
+    font-size: 14px !important;
+    text-shadow: none !important;
+    color: var(--code-block-text) !important;
+}
+
+.token.keyword {
+    color: var(--token-keyword) !important;
+    font-weight: 600;
+}
+
+.token.class-name,
+.token.type {
+    color: var(--token-class) !important;
+}
+
+.token.function {
+    color: var(--token-function) !important;
+}
+
+.token.string,
+.token.char {
+    color: var(--token-string) !important;
+}
+
+.token.punctuation {
+    color: var(--token-punctuation) !important;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: var(--token-comment) !important;
+    font-style: italic;
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+    color: var(--token-operator) !important;
+}
+
+.token.number {
+    color: var(--token-number) !important;
+}
+
+.token.boolean,
+.token.constant {
+    color: var(--token-boolean) !important;
+}
+
+.token.tag,
+.token.selector,
+.token.attr-name {
+    color: var(--token-tag) !important;
+}
+
+.token.attr-value,
+.token.builtin {
+    color: var(--token-attribute) !important;
+}
+
+/* ==========================================================================
+   13. SIDEBAR / ÍNDICE DE NAVEGACIÓN (.TOC)
+   ========================================================================== */
+
+.toc-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background-color: var(--primary);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius-lg);
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: var(--shadow-toggle);
+    transition: left 0.3s ease, background-color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toc-toggle.open {
+    left: calc(var(--sidebar-width) + 20px);
+}
+
+.toc-toggle:hover {
+    background-color: var(--primary-light);
+    transform: scale(1.05);
+}
+
+.toc {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * (var(--sidebar-width) + 30px));
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 25px 20px;
+    overflow-y: auto;
+    transition: left 0.3s ease;
+    z-index: 999;
+    box-shadow: var(--shadow-md);
+}
+
+.toc.open {
+    left: 0;
+}
+
+.toc h3,
+.toc-title {
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary);
+    color: var(--primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.toc ul,
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc li {
+    margin: 4px 0;
+}
+
+.toc a {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.92rem;
+    transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+}
+
+.toc a:hover {
+    background-color: var(--surface-alt);
+    color: var(--primary);
+    padding-left: 16px;
+}
+
+.toc a.active {
+    background-color: var(--primary);
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+body.dark .toc a.active {
+    color: #12181F;
+}
+
+/* ==========================================================================
+   14. PIE DE PÁGINA (FOOTER)
+   ========================================================================== */
+
+footer,
+.footer {
+    font-size: 13px;
+    text-align: center;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 50px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* Previene el parpadeo de tema claro durante la carga inicial en modo oscuro */
+html.dark-pending,
+html.dark-pending body {
+    background-color: #12181F;
+    color: #E8EDF2;
+}
+
+/* ==========================================================================
+   15. ADAPTABILIDAD RESPONSIVA, ACCESIBILIDAD Y MEDIOS
+   ========================================================================== */
+
+.theme-toggle-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle-btn {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    min-height: 40px;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.theme-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* Anillos de Enfoque de Alto Contraste (WCAG 2.4.7 Focus Visible) */
+:focus-visible {
+    outline: 3px solid var(--primary-light);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+body.dark :focus-visible {
+    outline-color: var(--accent);
+}
+
+a:focus-visible {
+    outline: 3px solid var(--primary-light);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.toc-toggle:focus-visible,
+.theme-toggle-btn:focus-visible,
+.switch input:focus-visible + .slider {
+    outline: 3px solid var(--primary-light);
+    outline-offset: 3px;
+}
+
+.toc a:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+    background-color: var(--surface-alt);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media (prefers-contrast: high) {
+    :root {
+        --border: #000000;
+        --text-muted: #1D2A35;
+    }
+
+    body.dark {
+        --border: #FFFFFF;
+        --text-muted: #E8EDF2;
+    }
+
+    .toc a.active {
+        outline: 2px solid currentColor;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 280px;
+    }
+
+    .container {
+        padding: 16px;
+        width: 100%;
+    }
+
+    .institutional-header,
+    .inst-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .switch,
+    .theme-toggle-container {
+        align-self: flex-end;
+    }
+
+    .main-banner,
+    .header-banner {
+        padding: 20px;
+        border-left-width: 6px;
+    }
+
+    .main-banner h1,
+    .header-banner h1 {
+        font-size: 21px;
+    }
+
+    h2 {
+        font-size: 19px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    .flow-node {
+        display: block;
+        margin: 6px 0;
+        width: 100%;
+    }
+}
+
+@media print {
+    .toc,
+    .toc-toggle,
+    #tocToggle,
+    #toc,
+    .switch,
+    .theme-toggle-container,
+    .theme-toggle-wrapper,
+    .theme-btn,
+    .theme-toggle-btn,
+    #themeToggleBtn,
+    .skip-link {
+        display: none !important;
+    }
+
+    body {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        font-size: 10pt;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    pre[class*="language-"] {
+        white-space: pre-wrap !important;
+        word-break: break-all !important;
+        border: 1px solid #CCC !important;
+    }
+
+    .main-banner,
+    .header-banner {
+        border-left-color: #000000 !important;
+        background-color: #F0F0F0 !important;
+        color: #000000 !important;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- ENLACE DE NAVEGACIÓN DIRECTA AL CONTENIDO -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- ÍNDICE DESPLEGABLE (SIDEBAR FLOTANTE) -->
+    <button class="toc-toggle" id="tocToggle" onclick="toggleTOC()" aria-label="Abrir menú de contenidos" aria-expanded="false" aria-controls="toc">
+        ☰
+    </button>
+
+    <nav class="toc" id="toc" aria-label="Índice de contenidos">
+        <h3 class="toc-title">Índice de Contenidos</h3>
+        <ul class="toc-list" id="tocList">
+            <li><a href="#efectos-secundarios-y-hook-useeffect">3.1. Efectos Secundarios y Hook useEffect</a></li>
+            <li><a href="#consumo-de-apis-rest">3.2. Consumo de APIs REST (API Calls)</a></li>
+            <li><a href="#antipatrones-y-errores-frecuentes">3.3. Antipatrones y Errores Frecuentes en el Manejo de Efectos</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="container">
+        <!-- Cabecera Institucional -->
+        <header class="institutional-header">
+            <div class="institutional-info">
+                <h3>Instituto Hilet</h3>
+                <p><strong>Carrera:</strong> Analista de Sistemas</p>
+                <p><strong>Materia:</strong> Algoritmos III</p>
+                <p><strong>Docente:</strong> Tec. Mango Eduardo</p>
+            </div>
+
+            <!-- Switch de Tema Claro / Oscuro -->
+            <label class="switch" title="Cambiar modo claro / oscuro">
+                <input type="checkbox" id="themeToggleSwitch" role="switch" aria-label="Cambiar entre modo claro u oscuro">
+                <span class="slider">
+                    <svg class="icon sun" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                    </svg>
+                    <svg class="icon moon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    </svg>
+                </span>
+            </label>
+        </header>
+
+        <!-- Banner Principal -->
+        <div class="main-banner">
+            <h1>Bloque 3: Ciclo de Vida, Efectos Secundarios y APIs</h1>
+            <p>Gestión de Desarrollo de Software / Algoritmos y Programación III</p>
+        </div>
+
+        <!-- CUERPO PRINCIPAL DEL CONTENIDO -->
+        <main id="main-content" tabindex="-1">
+
+            <!-- SECCIÓN 3.1 -->
+            <section id="efectos-secundarios-y-hook-useeffect">
+                <h2>3.1. Efectos Secundarios y Hook <code>useEffect</code></h2>
+
+                <h3>Pureza Funcional y la Necesidad de Efectos Secundarios</h3>
+                <p>En el paradigma de desarrollo propuesto por React, los componentes funcionales operan bajo el principio de <strong>pureza funcional</strong>. Una función se considera pura cuando, ante un mismo conjunto de entradas (propiedades y estado), retorna de manera determinista la misma estructura de interfaz de usuario sin generar mutaciones en variables externas ni alterar el entorno de ejecución. La ecuación fundamental de la librería expresa esta relación como:</p>
+
+                <div class="concept-box" style="text-align: center; font-size: 1.15rem; font-weight: 700; margin: 20px 0;">
+                    UI = f(State, Props)
+                </div>
+
+                <p>Sin embargo, las aplicaciones de software empresariales requieren interactuar con subsistemas que operan fuera del alcance del renderizado. Estas operaciones no deterministas se denominan formalmente <strong>efectos secundarios</strong> (<em>Side Effects</em>). Un efecto secundario es cualquier cómputo o mutación que interactúa con el entorno exterior al ciclo de cálculo puro del componente.</p>
+
+                <p>Entre los principales efectos secundarios en el desarrollo frontend destacan:</p>
+                <ul>
+                    <li><strong>Peticiones de red HTTP:</strong> Comunicación asíncrona con servicios externos o interfaces de programación de aplicaciones (APIs REST).</li>
+                    <li><strong>Suscripción y desuscripción de eventos:</strong> Conexión con oyentes globales del navegador (<code>window</code>, <code>document</code>), canales de WebSockets o flujos de eventos del servidor (<em>Server-Sent Events</em>).</li>
+                    <li><strong>Manipulación manual del DOM:</strong> Integración de librerías de terceros que requieren acceso directo a nodos del navegador (tales como bibliotecas de gráficos Canvas o reproductores multimedia).</li>
+                    <li><strong>Gestión de temporizadores:</strong> Programación de retardos e intervalos mediante <code>setTimeout</code> o <code>setInterval</code>.</li>
+                    <li><strong>Persistencia en almacenamiento local:</strong> Lectura y escritura síncrona en <code>localStorage</code> o <code>sessionStorage</code>.</li>
+                </ul>
+
+                <p>Ejecutar estas operaciones directamente dentro del cuerpo principal de la función componente constituye una violación arquitectónica. Debido a que React puede invocar la función componente múltiples veces durante los ciclos de reconciliación, disparar efectos secundarios en el renderizado provoca bloqueos en el hilo principal del navegador, condiciones de carrera (<em>race conditions</em>) y bucles infinitos de renderizado.</p>
+
+                <p>Para aislar estas operaciones no puras y ejecutarlas en momentos predecibles del ciclo de vida, la librería proporciona el hook primitivo <code>useEffect</code>.</p>
+
+                <!-- DIAGRAMA SVG 1: Ciclo de Renderizado y Efectos en React -->
+                <div class="diagram" role="img" aria-label="Diagrama del Ciclo de Renderizado y Efectos en React">
+                    <div class="diagram-title">Figura 1: Ciclo de Renderizado, Pintado y Ejecución Post-Commit de Efectos en React</div>
+                    <svg viewBox="0 0 760 430" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+                        <title>Ciclo de Renderizado y Efectos en React</title>
+                        <desc>Flujo secuencial que ilustra las fases de render, commit, pintado del navegador y ejecución asíncrona post-commit de useEffect.</desc>
+                        <defs>
+                            <marker id="arrow-flow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)" />
+                            </marker>
+                        </defs>
+                        <!-- Nodo 1 -->
+                        <g id="nodo-1">
+                            <rect x="130" y="15" width="500" height="52" rx="8" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="380" y="34" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="14" font-weight="700">1. Disparo de Render</text>
+                            <text x="380" y="52" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="12">Modificación de Estado o Propiedades en el árbol de componentes</text>
+                        </g>
+                        <path d="M 380 67 L 380 88" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-flow)" />
+                        <!-- Nodo 2 -->
+                        <g id="nodo-2">
+                            <rect x="130" y="94" width="500" height="52" rx="8" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="380" y="113" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="14" font-weight="700">2. Ejecución del Componente</text>
+                            <text x="380" y="131" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="12">Cálculo puro y determinista de la estructura virtual JSX</text>
+                        </g>
+                        <path d="M 380 146 L 380 167" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-flow)" />
+                        <!-- Nodo 3 -->
+                        <g id="nodo-3">
+                            <rect x="130" y="173" width="500" height="52" rx="8" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="380" y="192" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="14" font-weight="700">3. Fase de Commit</text>
+                            <text x="380" y="210" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="12">React actualiza los parches mínimos en el DOM real del navegador</text>
+                        </g>
+                        <path d="M 380 225 L 380 246" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-flow)" />
+                        <!-- Nodo 4 -->
+                        <g id="nodo-4">
+                            <rect x="130" y="252" width="500" height="52" rx="8" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="380" y="271" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="14" font-weight="700">4. Pintado en Pantalla (Browser Paint)</text>
+                            <text x="380" y="289" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="12">El motor del navegador dibuja los píxeles visibles para el usuario</text>
+                        </g>
+                        <path d="M 380 304 L 380 325" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-flow)" />
+                        <!-- Nodo 5 -->
+                        <g id="nodo-5">
+                            <rect x="130" y="331" width="500" height="54" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+                            <text x="380" y="350" text-anchor="middle" dominant-baseline="central" fill="var(--primary)" font-family="system-ui, sans-serif" font-size="14" font-weight="700">5. Ejecución de useEffect (Post-Commit)</text>
+                            <text x="380" y="369" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12">Ejecución asíncrona de efectos sin bloquear el pintado de la interfaz</text>
+                        </g>
+                    </svg>
+                    <div class="diagram-legend">Secuencia temporal que garantiza una experiencia de usuario fluida al diferir operaciones de red y suscripciones fuera del hilo crítico de renderizado.</div>
+                </div>
+
+                <h3>Mecánica de Sincronización y Ciclo de Ejecución</h3>
+                <p>El hook <code>useEffect</code> no debe concebirse únicamente como un sustituto de los métodos del ciclo de vida de los componentes de clase (<code>componentDidMount</code>, <code>componentDidUpdate</code> y <code>componentWillUnmount</code>). Su modelo mental responde a la <strong>sincronización declarativa</strong> entre el componente y un sistema exterior.</p>
+
+                <p>La firma formal del hook se define mediante dos parámetros:</p>
+
+                <div class="code-container">
+                    <pre><code class="language-typescript">useEffect(setup: () => void | (() => void), dependencies?: readonly unknown[]): void;</code></pre>
+                </div>
+
+                <p>El parámetro <code>setup</code> es una función que encapsula la lógica del efecto secundario. Dicha función puede opcionalmente retornar una función de limpieza (<em>cleanup function</em>). El parámetro <code>dependencies</code> es un array opcional que condiciona la reejecución del efecto en función de los cambios experimentados por sus valores.</p>
+
+                <p>El flujo temporal garantiza que el código dentro de <code>useEffect</code> se ejecute <strong>después</strong> de que el navegador ha completado el pintado de la pantalla (<em>post-commit</em>). Esta decisión arquitectónica previene que operaciones lentas (como una llamada de red o una suscripción pesada) bloqueen la renderización visual, preservando la fluidez de la interfaz.</p>
+
+                <h3>Manejo y Comportamiento del Array de Dependencias</h3>
+                <p>El segundo argumento de <code>useEffect</code>, conocido como array de dependencias (<em>dependency array</em>), determina la frecuencia y las condiciones bajo las cuales se dispara la función de efecto. React evalúa los valores provistos comparando su estado previo con el actual mediante el algoritmo de igualdad estricta superficial <code>Object.is</code>.</p>
+
+                <p>Existen tres modalidades de configuración para este array, cada una con un impacto directo en el ciclo de vida del componente:</p>
+
+                <h4>1. Sin Array de Dependencias (<code>useEffect(fn)</code>)</h4>
+                <p>Al omitir el segundo parámetro, React ejecuta la función de efecto en el montaje inicial del componente y después de cada re-renderizado posterior, independientemente de qué estado o propiedad haya cambiado.</p>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">useEffect(() => {
+  // Se ejecuta tras el montaje inicial y tras CADA renderizado subsiguiente
+  document.title = `Actualización del sistema - ${Date.now()}`;
+});</code></pre>
+                </div>
+
+                <p>Este comportamiento resulta costoso a nivel computacional y suele constituir un fallo de diseño. Si dentro de la función de efecto se actualiza una variable de estado, se desencadenará un ciclo destructivo: el estado produce un nuevo renderizado, el renderizado ejecuta nuevamente el efecto, y el efecto actualiza nuevamente el estado, generando un bucle infinito que colapsa la pestaña del navegador.</p>
+
+                <h4>2. Array de Dependencias Vacío (<code>useEffect(fn, [])</code>)</h4>
+                <p>Cuando se suministra un array vacío como segundo argumento, se le indica a React que la lógica del efecto no depende de ninguna variable reactiva (ni estado ni propiedades). Por consiguiente, la función se ejecuta exclusivamente una sola vez: durante la fase de <strong>montaje inicial</strong> (<em>Mounting</em>), justo después de que el componente se inserta en el DOM por primera vez.</p>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">useEffect(() => {
+  // Se ejecuta únicamente una vez al montarse el componente
+  const identificadorTerminal = iniciarSesionTelemetria();
+  
+  return () => {
+    finalizarSesionTelemetria(identificadorTerminal);
+  };
+}, []);</code></pre>
+                </div>
+
+                <p>Esta modalidad es el patrón predilecto para tareas de inicialización que deben ocurrir una única vez en la vida del componente, tales como la carga inicial de catálogos desde un servidor, la configuración de conexiones de telemetría o el registro de eventos globales del sistema.</p>
+
+                <h4>3. Con Dependencias Explícitas (<code>useEffect(fn, [depA, depB])</code>)</h4>
+                <p>En este modo de operación, el array contiene referencias a variables de estado, propiedades o funciones. React ejecuta el efecto en el montaje inicial y, en las actualizaciones posteriores, compara cada elemento del array con su valor del renderizado previo. Si al menos uno de los valores presenta una diferencia según <code>Object.is</code>, la función del efecto se ejecuta nuevamente.</p>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">interface PanelAuditoriaProps {
+  idUsuario: string;
+  filtroFecha: string;
+}
+
+function PanelAuditoria({ idUsuario, filtroFecha }: PanelAuditoriaProps) {
+  useEffect(() => {
+    // Se ejecuta al montar y cada vez que 'idUsuario' o 'filtroFecha' cambien
+    consultarRegistrosAuditoria(idUsuario, filtroFecha);
+  }, [idUsuario, filtroFecha]);
+
+  return &lt;div&gt;Visualización de Auditoría&lt;/div&gt;;
+}</code></pre>
+                </div>
+
+                <p>Es indispensable asegurar la exhaustividad de las dependencias. Omitir una variable reactiva utilizada dentro del efecto conduce al antipatrón de <strong>dependencias estancadas</strong> (<em>stale closures</em>), donde la función del efecto retiene en memoria valores obsoletos de renderizados anteriores, produciendo inconsistencias lógicas en el sistema.</p>
+
+                <!-- TABLA 1: Modalidades del Array de Dependencias -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Modalidad</th>
+                                <th>Sintaxis</th>
+                                <th>Momento de Ejecución</th>
+                                <th>Caso de Uso Típico</th>
+                                <th>Riesgo Asociado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sin Dependencias</strong></td>
+                                <td><code>useEffect(fn)</code></td>
+                                <td>Montaje inicial y en cada renderizado</td>
+                                <td>Sincronización general de métricas en depuración</td>
+                                <td>Bucle infinito si muta estado local</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Array Vacío</strong></td>
+                                <td><code>useEffect(fn, [])</code></td>
+                                <td>Únicamente en el montaje inicial</td>
+                                <td>Carga inicial de datos y suscripciones fijas</td>
+                                <td>No responde a cambios en propiedades</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Con Dependencias</strong></td>
+                                <td><code>useEffect(fn, [a, b])</code></td>
+                                <td>Montaje inicial y ante cambios en <code>a</code> o <code>b</code></td>
+                                <td>Sincronización paramétrica y filtros dinámicos</td>
+                                <td>Fugas por dependencias inestables</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Función de Limpieza (<em>Cleanup Function</em>) y Liberación de Recursos</h3>
+                <p>Cuando un componente establece una conexión con el exterior, adquiere recursos que permanecen activos en la memoria del navegador. Si el componente se retira de la pantalla sin liberar dichos recursos, se produce una <strong>fuga de memoria</strong> (<em>Memory Leak</em>). Las suscripciones huérfanas continuarán ejecutándose en segundo plano, intentando actualizar estados de componentes que ya no existen en el árbol visual.</p>
+
+                <p>Para evitar esta anomalía, <code>useEffect</code> permite que la función de configuración retorne una <strong>función de limpieza</strong> (<em>Cleanup Function</em>).</p>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">import { useEffect, useState } from 'react';
+
+function MonitorConexionRed() {
+  const [estaEnLinea, setEstaEnLinea] = useState&lt;boolean&gt;(navigator.onLine);
+
+  useEffect(() => {
+    const manejarEstadoOnline = () => setEstaEnLinea(true);
+    const manejarEstadoOffline = () => setEstaEnLinea(false);
+
+    // 1. Suscripción a eventos del sistema
+    window.addEventListener('online', manejarEstadoOnline);
+    window.addEventListener('offline', manejarEstadoOffline);
+
+    // 2. Función de limpieza retornada
+    return () => {
+      // Liberación de recursos al desmontar o antes de reejecutar el efecto
+      window.removeEventListener('online', manejarEstadoOnline);
+      window.removeEventListener('offline', manejarEstadoOffline);
+    };
+  }, []);
+
+  return (
+    &lt;div&gt;
+      Estado de conectividad: {estaEnLinea ? 'Conectado' : 'Sin conexión'}
+    &lt;/div&gt;
+  );
+}</code></pre>
+                </div>
+
+                <p>El ciclo de ejecución de la función de limpieza obedece a dos momentos precisos:</p>
+                <ol>
+                    <li><strong>Antes de cada nueva ejecución del efecto:</strong> Si el efecto se dispara nuevamente debido al cambio en alguna dependencia, React ejecuta primero la función de limpieza correspondiente al renderizado anterior para desechar los recursos previos, y luego ejecuta el nuevo efecto con los valores actualizados.</li>
+                    <li><strong>Durante la fase de desmontaje (<em>Unmount</em>):</strong> Cuando el componente se retira definitivamente del DOM, React ejecuta la función de limpieza final para garantizar que no queden procesos residuales en ejecución.</li>
+                </ol>
+
+                <h4>El Comportamiento de React 18+ en Modo Estricto (<code>StrictMode</code>)</h4>
+                <p>En aplicaciones desarrolladas con Vite que operan en entorno de desarrollo (<code>development</code>), el componente suele estar envuelto en <code>&lt;React.StrictMode&gt;</code>. Bajo esta configuración, React ejecuta intencionalmente un ciclo doble de montaje para cada efecto:</p>
+
+                <!-- DIAGRAMA SVG 2: Ciclo Doble en Modo Estricto -->
+                <div class="diagram" role="img" aria-label="Diagrama del Ciclo de Auditoría en React 18 StrictMode">
+                    <div class="diagram-title">Figura 2: Ciclo de Auditoría de Efectos en React 18+ StrictMode (Entorno de Desarrollo)</div>
+                    <svg viewBox="0 0 720 130" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+                        <title>Doble Montaje en React 18 StrictMode</title>
+                        <desc>Representación secuencial del montaje inicial, desmontaje simulado con ejecución de cleanup y montaje definitivo.</desc>
+                        <defs>
+                            <marker id="arrow-mode" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)" />
+                            </marker>
+                        </defs>
+                        <!-- Paso 1 -->
+                        <g id="sm-nodo-1">
+                            <rect x="25" y="35" width="190" height="60" rx="8" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="120" y="58" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">1. Montaje</text>
+                            <text x="120" y="76" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="11">Ejecución Setup</text>
+                        </g>
+                        <path d="M 215 65 L 260 65" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-mode)" />
+                        <!-- Paso 2 -->
+                        <g id="sm-nodo-2">
+                            <rect x="265" y="35" width="190" height="60" rx="8" fill="var(--warning-bg)" stroke="var(--warning-border)" stroke-width="2"/>
+                            <text x="360" y="58" text-anchor="middle" dominant-baseline="central" fill="var(--warning-text)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">2. Desmontaje Simulado</text>
+                            <text x="360" y="76" text-anchor="middle" dominant-baseline="central" fill="var(--warning-text)" font-family="system-ui, sans-serif" font-size="11">Ejecución Cleanup</text>
+                        </g>
+                        <path d="M 455 65 L 500 65" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-mode)" />
+                        <!-- Paso 3 -->
+                        <g id="sm-nodo-3">
+                            <rect x="505" y="35" width="190" height="60" rx="8" fill="var(--success-bg)" stroke="var(--success-border)" stroke-width="2"/>
+                            <text x="600" y="58" text-anchor="middle" dominant-baseline="central" fill="var(--success-text)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">3. Montaje Definitivo</text>
+                            <text x="600" y="76" text-anchor="middle" dominant-baseline="central" fill="var(--success-text)" font-family="system-ui, sans-serif" font-size="11">Nuevo Setup Activo</text>
+                        </g>
+                    </svg>
+                    <div class="diagram-legend">Mecanismo de emulación diseñado para forzar la detección temprana de suscripciones huérfanas y fugas de memoria durante el desarrollo.</div>
+                </div>
+
+                <p>Este procedimiento busca auditar la robustez del código. Si la lógica del efecto carece de una función de limpieza adecuada, el doble montaje expondrá de inmediato duplicaciones de oyentes, suscripciones duplicadas a WebSockets o solicitudes de red redundantes antes de que el software sea desplegado a producción.</p>
+            </section>
+
+            <!-- SECCIÓN 3.2 -->
+            <section id="consumo-de-apis-rest">
+                <h2>3.2. Consumo de APIs REST (API Calls)</h2>
+
+                <h3>Arquitectura de Acceso a Datos en Proyectos React con Vite</h3>
+                <p>El consumo de servicios web mediante APIs REST constituye el eje de comunicación en arquitecturas Single Page Application (SPA). En entornos de producción, el acceso a datos debe estructurarse mediante capas de abstracción bien delimitadas, evitando incorporar URLs fijas o lógica de transporte HTTP dentro de los componentes visuales.</p>
+
+                <p>La herramienta de construcción <strong>Vite</strong> define convenciones específicas para la inyección de configuraciones de entorno. A diferencia de las herramientas heredadas que empleaban <code>process.env</code>, Vite expone las variables a través del objeto <code>import.meta.env</code>.</p>
+
+                <p>Para que una variable sea accesible en el código cliente de una aplicación Vite, debe utilizar obligatoriamente el prefijo <code>VITE_</code>:</p>
+
+                <div class="code-container">
+                    <pre><code class="language-ini"># Archivo: .env (en la raíz del proyecto)
+VITE_API_URL=https://api.empresa.com/v1
+VITE_TIMEOUT_MS=10000</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <pre><code class="language-typescript">// Acceso tipado a la configuración en el código de la aplicación
+const URL_BASE_API = import.meta.env.VITE_API_URL;</code></pre>
+                </div>
+
+                <p>Las variables privadas del servidor que carezcan del prefijo <code>VITE_</code> son ignoradas intencionalmente por Vite para impedir la filtración accidental de credenciales secretas en los paquetes de JavaScript descargados por el navegador del usuario.</p>
+
+                <p>Una arquitectura de software sólida promueve una estructura de directorios modular:</p>
+
+                <div class="code-container">
+                    <pre><code class="language-bash">src/
+├── api/
+│   └── clienteHttp.ts       # Configuración centralizada de transporte HTTP
+├── servicios/
+│   └── productoServicio.ts  # Contratos y llamadas tipadas del dominio
+├── tipos/
+│   └── producto.ts          # Definición formal de modelos e interfaces
+└── componentes/
+    └── CatalogoProductos.tsx# Capa de presentación y gestión de ciclo de vida</code></pre>
+                </div>
+
+                <h3>Integración Asíncrona: Cliente Nativo <code>fetch</code> vs. Librería <code>axios</code></h3>
+                <p>La invocación de servicios remotos puede implementarse a través de dos mecanismos predominantes: la API nativa del navegador <code>window.fetch</code> o la librería especializada <code>axios</code>. La elección entre ambos enfoques involucra consideraciones de mantenibilidad, volumen del paquete final (<em>bundle size</em>) y robustez en el tratamiento de errores.</p>
+
+                <h4>La API Nativa <code>fetch</code></h4>
+                <p>La función <code>fetch</code> es un estándar web nativo que no requiere instalar paquetes adicionales. Sin embargo, su comportamiento presenta particularidades que el equipo de desarrollo debe contemplar:</p>
+
+                <ul>
+                    <li><strong>Manejo de estados de error HTTP:</strong> <code>fetch</code> solo rechaza la promesa si ocurre un fallo a nivel de red (por ejemplo, pérdida de conectividad o falla en la resolución DNS). Cuando el servidor responde con un código de error de cliente o servidor (como <code>404 Not Found</code> o <code>500 Internal Server Error</code>), la promesa se resuelve como exitosa. Es responsabilidad del código verificar manualmente la propiedad <code>response.ok</code>.</li>
+                    <li><strong>Procesamiento de carga útil:</strong> La transformación del cuerpo de la respuesta requiere una invocación explícita adicional al método asíncrono <code>response.json()</code>.</li>
+                </ul>
+
+                <div class="code-container">
+                    <pre><code class="language-typescript">// src/servicios/productoServicioFetch.ts
+import { Producto } from '../tipos/producto';
+
+const URL_BASE = import.meta.env.VITE_API_URL;
+
+export async function obtenerProductos(): Promise&lt;Producto[]&gt; {
+  const respuesta = await fetch(`${URL_BASE}/productos`);
+
+  if (!respuesta.ok) {
+    throw new Error(`Fallo en el servicio HTTP: Código ${respuesta.status}`);
+  }
+
+  const datos: Producto[] = await respuesta.json();
+  return datos;
+}</code></pre>
+                </div>
+
+                <h4>El Cliente Especializado <code>axios</code></h4>
+                <p><code>axios</code> es una librería de transporte HTTP basada en promesas que añade capacidades avanzadas sobre las interfaces nativas del navegador:</p>
+
+                <ul>
+                    <li><strong>Rechazo automático de errores:</strong> Cualquier código de respuesta fuera del rango <code>2xx</code> rechaza automáticamente la promesa, facilitando la captura centralizada de errores.</li>
+                    <li><strong>Transformación automática de JSON:</strong> Los datos serializados devueltos por la API se parsean e inyectan directamente en la propiedad <code>data</code> del objeto de respuesta.</li>
+                    <li><strong>Interceptores de petición y respuesta:</strong> Permite registrar funciones intermedias (<em>middleware</em>) que procesan de forma transparente las solicitudes antes de ser enviadas o las respuestas antes de ser consumidas.</li>
+                    <li><strong>Configuración de tiempo de espera (<em>timeout</em>):</strong> Permite interrumpir automáticamente peticiones que excedan un umbral de latencia predeterminado.</li>
+                </ul>
+
+                <div class="code-container">
+                    <pre><code class="language-typescript">// src/api/clienteHttp.ts
+import axios from 'axios';
+
+export const clienteHttp = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: Number(import.meta.env.VITE_TIMEOUT_MS) || 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor para inyectar token de sesión en cada solicitud saliente
+clienteHttp.interceptors.request.use((configuracion) => {
+  const token = localStorage.getItem('token_autenticacion');
+  if (token && configuracion.headers) {
+    configuracion.headers.Authorization = `Bearer ${token}`;
+  }
+  return configuracion;
+});</code></pre>
+                </div>
+
+                <h4>El Rol de los Interceptores y su Potencial Arquitectónico</h4>
+                <p>Uno de los motivos fundamentales por los cuales la industria adopta Axios radica en el uso de <strong>interceptores</strong> (<em>Interceptors</em>). Un interceptor funciona como un puente o filtro intermedio en el flujo de comunicación de red, interceptando el tráfico en dos momentos clave:</p>
+
+                <ol>
+                    <li><strong>Interceptores de Solicitud (<em>Request Interceptors</em>):</strong> Se activan inmediatamente antes de que la petición HTTP sea despachada al servidor. Su principal ventaja reside en la centralización de tareas transversales (<em>cross-cutting concerns</em>). En lugar de escribir manualmente la cabecera <code>Authorization: Bearer &lt;token&gt;</code> en cada componente o servicio individual, el interceptor inyecta de forma automática y transparente las credenciales de seguridad en todas las llamadas salientes.</li>
+                    <li><strong>Interceptores de Respuesta (<em>Response Interceptors</em>):</strong> Se ejecutan en el instante en que el navegador recibe la respuesta del servidor, antes de entregarla al componente. Permiten gestionar globalmente contingencias de autenticación (como capturar un error <code>401 Unauthorized</code> para redireccionar al usuario hacia el formulario de inicio de sesión o solicitar la renovación del token de sesión) y registrar eventos de telemetría sin dispersar dicha lógica a lo largo del código.</li>
+                </ol>
+
+                <p>Al delegar estas operaciones en la capa de transporte, los componentes visuales permanecen desacoplados de los detalles de autorización y mantenimiento de cabeceras, preservando el principio de responsabilidad única.</p>
+
+                <!-- TABLA 2: Comparativa de Clientes HTTP -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Criterio de Selección</th>
+                                <th>API Nativa <code>fetch</code></th>
+                                <th>Librería <code>axios</code></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Dependencia Externa</strong></td>
+                                <td>Cero dependencias (estándar del navegador)</td>
+                                <td>Requiere paquete NPM externo (~13 KB)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Códigos HTTP 4xx/5xx</strong></td>
+                                <td>Resuelve la promesa; exige validar <code>response.ok</code></td>
+                                <td>Rechaza automáticamente la promesa</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transformación JSON</strong></td>
+                                <td>Exige invocar manualmente <code>await res.json()</code></td>
+                                <td>Transforma la respuesta automáticamente en <code>res.data</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Soporte de Interceptores</strong></td>
+                                <td>Requiere implementar envoltorios (<em>wrappers</em>) propios</td>
+                                <td>Proporciona API nativa de interceptores</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Control de Tiempos Límite</strong></td>
+                                <td>Requiere implementar temporizadores manuales</td>
+                                <td>Soporta propiedad declarativa <code>timeout</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Patrón del Triplete de Estados de Asincronía</h3>
+                <p>Toda operación asíncrona de acceso a datos a través de una red de computadoras está sujeta a tres circunstancias temporales: latencia de transporte, recepción de datos y posibles fallas de comunicación.</p>
+
+                <p>Para representar fielmente esta realidad en la interfaz, el estándar de la industria adopta el <strong>Patrón del Triplete de Estados de Asincronía</strong>. Este patrón modela formalmente tres variables de estado complementarias:</p>
+
+                <ol>
+                    <li><strong>Estado de Carga (<code>loading</code> - boolean):</strong> Bandera que indica que la solicitud está en tránsito. Permite desplegar indicadores visuales de espera (barras de progreso, ruletas giratorias o esqueletos de contenido) para mitigar la percepción de demora.</li>
+                    <li><strong>Estado de Datos (<code>data</code> - array u objeto):</strong> Contenedor tipado donde se almacenan los datos recibidos tras una respuesta exitosa (código HTTP <code>2xx</code>).</li>
+                    <li><strong>Estado de Error (<code>error</code> - string o null):</strong> Registro de anomalías que almacena el mensaje descriptivo del fallo ante interrupciones de red o respuestas de error del servidor (códigos HTTP <code>4xx</code> y <code>5xx</code>).</li>
+                </ol>
+
+                <!-- DIAGRAMA SVG 3: Máquina de Estados de Asincronía -->
+                <div class="diagram" role="img" aria-label="Diagrama de la Máquina de Estados de una Petición HTTP">
+                    <div class="diagram-title">Figura 3: Máquina de Estados del Triplete de Asincronía en Clientes HTTP</div>
+                    <svg viewBox="0 0 720 320" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+                        <title>Máquina de Estados de una Petición HTTP</title>
+                        <desc>Transiciones de estado entre el reposo inicial, el estado de carga y las bifurcaciones hacia éxito de datos o captura de error.</desc>
+                        <defs>
+                            <marker id="arrow-state" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)" />
+                            </marker>
+                        </defs>
+                        <!-- Estado Inicial -->
+                        <g id="st-inicial">
+                            <rect x="235" y="15" width="250" height="50" rx="8" fill="var(--surface-alt)" stroke="var(--border)" stroke-width="2"/>
+                            <text x="360" y="32" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">ESTADO INICIAL (Idle)</text>
+                            <text x="360" y="49" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="11">data = null | loading = false | error = null</text>
+                        </g>
+                        <path d="M 360 65 L 360 93" stroke="var(--primary)" stroke-width="2" fill="none" marker-end="url(#arrow-state)" />
+                        <!-- Estado Cargando -->
+                        <g id="st-cargando">
+                            <rect x="235" y="93" width="250" height="55" rx="8" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="2"/>
+                            <text x="360" y="112" text-anchor="middle" dominant-baseline="central" fill="var(--primary)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">ESTADO: CARGANDO (loading)</text>
+                            <text x="360" y="131" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="11">loading = true | error = null</text>
+                        </g>
+                        <!-- Flecha Éxito -->
+                        <path d="M 285 148 L 175 203" stroke="var(--success-border)" stroke-width="2" fill="none" marker-end="url(#arrow-state)" />
+                        <text x="180" y="168" fill="var(--success-text)" font-family="system-ui, sans-serif" font-size="11" font-weight="600">Resolución 2xx</text>
+                        <!-- Flecha Fallo -->
+                        <path d="M 435 148 L 545 203" stroke="var(--danger-border)" stroke-width="2" fill="none" marker-end="url(#arrow-state)" />
+                        <text x="540" y="168" fill="var(--danger-text)" font-family="system-ui, sans-serif" font-size="11" font-weight="600">Fallo Red / 4xx / 5xx</text>
+                        <!-- Estado Datos -->
+                        <g id="st-datos">
+                            <rect x="40" y="210" width="270" height="70" rx="8" fill="var(--success-bg)" stroke="var(--success-border)" stroke-width="2"/>
+                            <text x="175" y="230" text-anchor="middle" dominant-baseline="central" fill="var(--success-text)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">ESTADO: DATOS (data)</text>
+                            <text x="175" y="249" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="11">data = cargaUtil</text>
+                            <text x="175" y="266" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="11">loading = false | error = null</text>
+                        </g>
+                        <!-- Estado Error -->
+                        <g id="st-error">
+                            <rect x="410" y="210" width="270" height="70" rx="8" fill="var(--danger-bg)" stroke="var(--danger-border)" stroke-width="2"/>
+                            <text x="545" y="230" text-anchor="middle" dominant-baseline="central" fill="var(--danger-text)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">ESTADO: ERROR (error)</text>
+                            <text x="545" y="249" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="11">data = null | error = "Mensaje"</text>
+                            <text x="545" y="266" text-anchor="middle" dominant-baseline="central" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="11">loading = false</text>
+                        </g>
+                    </svg>
+                    <div class="diagram-legend">Estructuración determinista de las tres fases operativas para renderizado condicional en componentes reactivos.</div>
+                </div>
+
+                <p>A continuación se expone una implementación completa y robusta de un componente de catálogo que aplica el triplete de estados y el cliente <code>axios</code> con tipado estricto en TypeScript:</p>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">// src/tipos/producto.ts
+export interface Producto {
+  id: number;
+  nombre: string;
+  precio: number;
+  categoria: string;
+  stock: number;
+}</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">// src/componentes/CatalogoProductos.tsx
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Producto } from '../tipos/producto';
+import { clienteHttp } from '../api/clienteHttp';
+
+export function CatalogoProductos() {
+  const [productos, setProductos] = useState&lt;Producto[]&gt;([]);
+  const [cargando, setCargando] = useState&lt;boolean&gt;(true);
+  const [error, setError] = useState&lt;string | null&gt;(null);
+
+  useEffect(() => {
+    async function cargarCatalogo() {
+      try {
+        setCargando(true);
+        setError(null);
+
+        const respuesta = await clienteHttp.get&lt;Producto[]&gt;('/productos');
+        setProductos(respuesta.data);
+      } catch (errorCapturado: unknown) {
+        if (axios.isAxiosError(errorCapturado)) {
+          const mensajeServidor = errorCapturado.response?.data?.mensaje;
+          setError(mensajeServidor || 'Error al comunicarse con el servidor.');
+        } else {
+          setError('Ocurrió un error inesperado al procesar la solicitud.');
+        }
+      } finally {
+        setCargando(false);
+      }
+    }
+
+    cargarCatalogo();
+  }, []);
+
+  // 1. Renderizado condicional del estado de carga
+  if (cargando) {
+    return (
+      &lt;div role="status" aria-live="polite"&gt;
+        &lt;p&gt;Cargando catálogo de productos disponibles...&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  // 2. Renderizado condicional del estado de error
+  if (error !== null) {
+    return (
+      &lt;div role="alert"&gt;
+        &lt;p&gt;No fue posible cargar el catálogo: {error}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  // 3. Renderizado condicional de estado vacío
+  if (productos.length === 0) {
+    return &lt;p&gt;No existen productos registrados en este momento.&lt;/p&gt;;
+  }
+
+  // 4. Renderizado del estado de datos exitoso
+  return (
+    &lt;section&gt;
+      &lt;h2&gt;Listado de Productos&lt;/h2&gt;
+      &lt;ul&gt;
+        {productos.map((item) => (
+          &lt;li key={item.id}&gt;
+            &lt;strong&gt;{item.nombre}&lt;/strong&gt; - ${item.precio.toFixed(2)} 
+            (Categoría: {item.categoria})
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+                </div>
+
+                <h3>Renderizado de Listas Dinámicas y Optimización mediante el Atributo <code>key</code></h3>
+                <p>El procesamiento de arreglos de datos en interfaces de usuario se fundamenta en la transformación declarativa de colecciones mediante la función de orden superior <code>.map()</code>. Al invocar este método sobre un array de objetos, se transforma cada elemento de datos en un nodo visual JSX.</p>
+
+                <p>Sin embargo, para que el algoritmo de reconciliación de React actualice la interfaz de manera óptima, exige la presencia de una propiedad reservada denominada <strong><code>key</code></strong> en el elemento raíz retornado por cada iteración.</p>
+
+                <h4>Mecanismo del Algoritmo de Reconciliación con Claves</h4>
+                <p>Cuando el estado de una colección experimenta cambios (inserción, reordenamiento, filtrado o eliminación), React compara el árbol de Virtual DOM previo con el nuevo árbol generado. Sin una clave identificadora, React se ve obligado a comparar los elementos de la lista posición por posición (por índice ordinal).</p>
+
+                <p>Si se inserta un nuevo registro al inicio de una lista de cien elementos sin claves identificadoras, React interpretará que los cien elementos preexistentes han mutado, procediendo a re-renderizar y mutar cada uno de los nodos del DOM real de manera ineficiente.</p>
+
+                <p>Al proporcionar un atributo <code>key</code>, React asocia una identidad persistente a cada elemento del modelo. Durante el proceso de <em>diffing</em>, el algoritmo localiza las claves en ambos árboles:</p>
+                <ul>
+                    <li>Si la clave ya existía, preserva el nodo del DOM y simplemente actualiza sus atributos si cambiaron.</li>
+                    <li>Si una clave no existía en el árbol previo, crea e inserta el nuevo nodo en la posición correspondiente.</li>
+                    <li>Si una clave del árbol previo desapareció del nuevo árbol, destruye y retira únicamente dicho nodo del DOM.</li>
+                </ul>
+
+                <!-- DIAGRAMA SVG 4: Reconciliación con Atributo Key -->
+                <div class="diagram" role="img" aria-label="Diagrama de Reconciliación del Virtual DOM mediante Claves">
+                    <div class="diagram-title">Figura 4: Identificación Persistente de Nodos mediante el Atributo Key en la Reconciliación</div>
+                    <svg viewBox="0 0 740 220" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+                        <title>Algoritmo de Reconciliación con Claves</title>
+                        <desc>Comparación visual entre una lista previa y una nueva lista con inserción al inicio demostrando la reutilización de nodos existentes.</desc>
+                        <defs>
+                            <marker id="arrow-recon" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)" />
+                            </marker>
+                        </defs>
+                        <!-- Fila Lista Previa -->
+                        <text x="30" y="45" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">Lista Previa:</text>
+                        <g id="lp-101">
+                            <rect x="180" y="25" width="130" height="40" rx="6" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="245" y="45" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">Key: 101 (Item A)</text>
+                        </g>
+                        <g id="lp-102">
+                            <rect x="340" y="25" width="130" height="40" rx="6" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="405" y="45" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">Key: 102 (Item B)</text>
+                        </g>
+                        <g id="lp-103">
+                            <rect x="500" y="25" width="130" height="40" rx="6" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="565" y="45" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">Key: 103 (Item C)</text>
+                        </g>
+
+                        <!-- Conexiones Diffing Reutilizadas -->
+                        <path d="M 245 65 L 365 118" stroke="var(--secondary-light)" stroke-width="1.5" stroke-dasharray="4 4" fill="none" marker-end="url(#arrow-recon)" />
+                        <path d="M 405 65 L 505 118" stroke="var(--secondary-light)" stroke-width="1.5" stroke-dasharray="4 4" fill="none" marker-end="url(#arrow-recon)" />
+                        <path d="M 565 65 L 645 118" stroke="var(--secondary-light)" stroke-width="1.5" stroke-dasharray="4 4" fill="none" marker-end="url(#arrow-recon)" />
+
+                        <!-- Fila Nueva Lista -->
+                        <text x="30" y="145" fill="var(--text-muted)" font-family="system-ui, sans-serif" font-size="13" font-weight="700">Nueva Lista:</text>
+                        <!-- Elemento Nuevo Insertado -->
+                        <g id="nl-104">
+                            <rect x="150" y="125" width="140" height="42" rx="6" fill="var(--success-bg)" stroke="var(--success-border)" stroke-width="2"/>
+                            <text x="220" y="146" text-anchor="middle" dominant-baseline="central" fill="var(--success-text)" font-family="system-ui, sans-serif" font-size="12" font-weight="700">Key: 104 [NUEVO]</text>
+                        </g>
+                        <g id="nl-101">
+                            <rect x="310" y="125" width="120" height="42" rx="6" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="370" y="146" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">Key: 101 (A)</text>
+                        </g>
+                        <g id="nl-102">
+                            <rect x="450" y="125" width="120" height="42" rx="6" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="510" y="146" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">Key: 102 (B)</text>
+                        </g>
+                        <g id="nl-103">
+                            <rect x="590" y="125" width="120" height="42" rx="6" fill="var(--surface-alt)" stroke="var(--primary)" stroke-width="2"/>
+                            <text x="650" y="146" text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">Key: 103 (C)</text>
+                        </g>
+
+                        <!-- Etiqueta Conclusión -->
+                        <text x="370" y="195" text-anchor="middle" fill="var(--primary)" font-family="system-ui, sans-serif" font-size="12" font-weight="600">React identifica que 101, 102 y 103 son idénticos; NO los recrea. Simplemente inserta 104 al inicio del DOM.</text>
+                    </svg>
+                    <div class="diagram-legend">La persistencia de claves permite mutaciones puntuales en tiempo lineal O(n) sin destruir ni regenerar elementos inalterados.</div>
+                </div>
+
+                <h4>Requisitos de una Clave Válida</h4>
+                <p>Para garantizar el funcionamiento correcto de la reconciliación, el valor asignado a la propiedad <code>key</code> debe cumplir tres condiciones de ingeniería:</p>
+                <ul>
+                    <li><strong>Unicidad:</strong> La clave debe ser estrictamente única entre los elementos hermanos dentro de la misma lista. No es necesario que sea única a nivel global en toda la aplicación.</li>
+                    <li><strong>Estabilidad:</strong> La clave no debe mutar entre renderizados sucesivos. Generar claves dinámicas mediante <code>Math.random()</code> o <code>Date.now()</code> en cada renderizado obliga a React a destruir y reconstruir la totalidad del DOM en cada actualización, anulando los beneficios del Virtual DOM.</li>
+                    <li><strong>Determinismo:</strong> El valor debe derivarse directamente de los datos del dominio, siendo el identificador primario (<code>id</code>) de la base de datos o un código único de negocio el valor recomendado.</li>
+                </ul>
+
+                <h4>Antipatrón del Uso del Índice del Arreglo como <code>key</code></h4>
+                <p>Un fallo recurrente en el desarrollo con React consiste en utilizar el parámetro de índice posicional del método <code>.map((item, index) => ...)</code> como valor de la propiedad <code>key</code>:</p>
+
+                <div class="code-container">
+                    <pre><code class="language-tsx">// ❌ ANTIPATRÓN: Uso del índice ordinal del array como key
+&lt;ul&gt;
+  {productos.map((producto, index) => (
+    &lt;li key={index}&gt;
+      &lt;input type="checkbox" /&gt;
+      &lt;span&gt;{producto.nombre}&lt;/span&gt;
+    &lt;/li&gt;
+  ))}
+&lt;/ul&gt;</code></pre>
+                </div>
+
+                <p>Si la lista es estática y nunca experimenta modificaciones, reordenamientos ni filtros, el índice no provocará errores visuales visibles. Sin embargo, en listas interactivas donde los elementos pueden ordenarse, agregarse al inicio o eliminarse, el índice como clave causa severos problemas:</p>
+
+                <ol>
+                    <li><strong>Inconsistencias en componentes con estado interno:</strong> Si cada elemento de la lista contiene un control interactivo (como una casilla de verificación o un campo de texto), el estado interno del control HTML está vinculado al nodo del DOM. Al eliminar el primer elemento, el elemento que antes ocupaba la posición 1 pasa a ser la posición 0. Como React asocia la clave con la posición ordinal <code>0</code>, reutilizará el nodo anterior, manteniendo la casilla marcada en el elemento equivocado.</li>
+                    <li><strong>Degradación de rendimiento:</strong> Al alterar el orden de la colección, todos los índices cambian de valor, forzando a React a actualizar innecesariamente la totalidad de los nodos en lugar de simplemente reordenarlos en el DOM.</li>
+                </ol>
+            </section>
+
+            <!-- SECCIÓN 3.3 -->
+            <section id="antipatrones-y-errores-frecuentes">
+                <h2>3.3. Antipatrones y Errores Frecuentes en el Manejo de Efectos</h2>
+
+                <div class="alert-box">
+                    <h3>1. Utilizar <code>useEffect</code> para Calcular Estado Derivado</h3>
+                    <p>Un error habitual consiste en emplear un efecto secundario para sincronizar una variable de estado a partir de otra existente:</p>
+
+                    <div class="code-container">
+                        <pre><code class="language-tsx">// ❌ INCORRECTO: Uso innecesario de estado y efecto para datos derivables
+function ResumenCompra({ items }: { items: ItemCarrito[] }) {
+  const [total, setTotal] = useState&lt;number&gt;(0);
+
+  useEffect(() => {
+    const totalCalculado = items.reduce((acc, item) => acc + item.precio, 0);
+    setTotal(totalCalculado);
+  }, [items]);
+
+  return &lt;div&gt;Total: ${total}&lt;/div&gt;;
+}</code></pre>
+                    </div>
+
+                    <p>Este patrón introduce un renderizado redundante: el componente renderiza con el estado desactualizado, el efecto se ejecuta tras el pintado, actualiza <code>total</code> y fuerza un segundo renderizado inmediato. La solución arquitectónica correcta consiste en <strong>calcular el valor durante el renderizado</strong>:</p>
+
+                    <div class="code-container">
+                        <pre><code class="language-tsx">// ✅ CORRECTO: Cómputo directo en el ciclo de renderizado
+function ResumenCompra({ items }: { items: ItemCarrito[] }) {
+  const total = items.reduce((acc, item) => acc + item.precio, 0);
+
+  return &lt;div&gt;Total: ${total}&lt;/div&gt;;
+}</code></pre>
+                    </div>
+
+                    <p>Si el cómputo involucra miles de elementos y resulta computacionalmente pesado, se optimiza mediante el hook <code>useMemo</code>, pero nunca mediante un efecto secundario.</p>
+                </div>
+
+                <div class="warning-box">
+                    <h3>2. Omitir Dependencias u Ocultar Advertencias del Linter</h3>
+                    <p>Configurar arrays de dependencias incompletos para "evitar que el efecto corra de más" genera cierres estancados (<em>stale closures</em>). React ofrece la regla de análisis estático <code>react-hooks/exhaustive-deps</code>. Desactivar esta regla mediante comentarios de exclusión (<code>// eslint-disable-next-line</code>) oculta fallas de diseño en lugar de resolver la estabilidad referencial de las variables involucradas.</p>
+                </div>
+
+                <div class="warning-box">
+                    <h3>3. Descuido en la Limpieza de Suscripciones y Recursos</h3>
+                    <p>Establecer conexiones persistentes, temporizadores (<code>setInterval</code>) o escuchadores de eventos globales sin retornar una función de limpieza produce fugas de memoria y acumulación de procesos huérfanos que continúan intentando actualizar el estado de componentes ya desmontados.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Pie de Página Institucional -->
+        <footer class="footer">
+            Instituto Hilet - Algoritmos III<br>
+            Material de estudio académico - Diseñado para Cátedras de Desarrollo de Software
+        </footer>
+    </div>
+
+    <!-- LÓGICA DE INTERACCIÓN (SISTEMA DE TEMA Y SIDEBAR TOC) -->
+    <script>
+        function applyTheme(isDark) {
+            document.body.classList.toggle('dark', isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+            const themeSwitch = document.getElementById('themeToggleSwitch');
+            if (themeSwitch) {
+                themeSwitch.checked = isDark;
+                themeSwitch.setAttribute('aria-checked', isDark ? 'true' : 'false');
+            }
+        }
+
+        function initTheme() {
+            if (document.documentElement.classList.contains('dark-pending')) {
+                document.documentElement.classList.remove('dark-pending');
+                document.body.classList.add('dark');
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            let isDark = false;
+            if (savedTheme) {
+                isDark = (savedTheme === 'dark');
+            } else {
+                isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            applyTheme(isDark);
+
+            const themeSwitch = document.getElementById('themeToggleSwitch');
+            if (themeSwitch) {
+                themeSwitch.addEventListener('change', () => {
+                    applyTheme(themeSwitch.checked);
+                });
+            }
+        }
+
+        function toggleTOC() {
+            const toc = document.getElementById('toc');
+            const button = document.getElementById('tocToggle');
+            if (!toc || !button) return;
+
+            const isOpen = toc.classList.toggle('open');
+            button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            button.innerHTML = isOpen ? '✕' : '☰';
+            button.setAttribute('aria-label', isOpen ? 'Cerrar menú de contenidos' : 'Abrir menú de contenidos');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+
+            document.querySelectorAll('.toc a').forEach(link => {
+                link.addEventListener('click', () => {
+                    const toc = document.getElementById('toc');
+                    const button = document.getElementById('tocToggle');
+                    if (toc && button) {
+                        toc.classList.remove('open');
+                        button.setAttribute('aria-expanded', 'false');
+                        button.innerHTML = '☰';
+                        button.setAttribute('aria-label', 'Abrir menú de contenidos');
+                    }
+                });
+            });
+
+            const sections = document.querySelectorAll('section[id]');
+            const tocLinks = document.querySelectorAll('.toc a');
+
+            if (sections.length > 0 && tocLinks.length > 0) {
+                window.addEventListener('scroll', () => {
+                    let currentSectionId = '';
+
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop - 120;
+                        if (window.scrollY >= sectionTop) {
+                            currentSectionId = section.id;
+                        }
+                    });
+
+                    tocLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (currentSectionId && link.getAttribute('href') === '#' + currentSectionId) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

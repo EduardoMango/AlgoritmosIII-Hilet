@@ -1,67 +1,68 @@
 import { useState, type SubmitEvent, type ChangeEvent } from 'react';
-import type { Libro } from '../types/libro';
+import type { NuevoLibroDto } from '../types/libro';
 
 interface LibroFormProps {
-  /** Función callback que recibe el nuevo libro creado para insertarlo en el estado padre */
-  onAgregarLibro: (nuevoLibro: Libro) => void;
+  /** Función callback que despacha la petición POST /libros al backend */
+  onAgregarLibro: (nuevoLibro: NuevoLibroDto) => Promise<boolean | void>;
 }
 
 /**
- * Componente LibroForm
+ * Componente: LibroForm
  * =====================
- * Demuestra el patrón de COMPONENTE CONTROLADO (Controlled Component):
- * 1. Cada campo de entrada (<input>, <select>) tiene su atributo `value` enlazado
- *    a una variable de estado local (`useState`).
- * 2. Cada pulsación del usuario dispara `onChange`, actualizando el estado de React.
- * 3. React actúa como la "Fuente Única de Verdad" (Single Source of Truth).
- * 4. El envío utiliza `e.preventDefault()` para evitar la recarga sincrónica de la página web.
+ * Demuestra el patrón de COMPONENTE CONTROLADO integrado con llamadas asíncronas HTTP POST:
+ * 1. Mantiene el estado local de los inputs sincronizado con la memoria de React.
+ * 2. Bloquea el botón de envío y previene doble sumisión mientras la petición está en tránsito.
+ * 3. Procesa respuestas exitosas limpiando el formulario, o muestra feedback en caso de error.
  */
 export function LibroForm({ onAgregarLibro }: LibroFormProps) {
-  // Estados locales independientes para cada campo del formulario (Estrategia Atómica)
   const [titulo, setTitulo] = useState<string>('');
   const [autor, setAutor] = useState<string>('');
   const [genero, setGenero] = useState<string>('Programación');
-  const [error, setError] = useState<string>('');
+  const [errorLocal, setErrorLocal] = useState<string>('');
+  const [enviando, setEnviando] = useState<boolean>(false);
 
-  function manejarSubmit(e: SubmitEvent<HTMLFormElement>) {
-    // 1. Cancelamos el comportamiento predeterminado del navegador (recarga del documento)
+  async function manejarSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // 2. Validación simple de campos obligatorios
     if (!titulo.trim() || !autor.trim()) {
-      setError('El título y el autor son obligatorios.');
+      setErrorLocal('El título y el autor son campos obligatorios.');
       return;
     }
 
-    // 3. Construimos el nuevo objeto de forma inmutable
-    const nuevoLibro: Libro = {
-      id: Date.now(), // Identificador único generado por timestamp
-      titulo: titulo.trim(),
-      autor: autor.trim(),
-      genero,
-      disponible: true,
-    };
+    try {
+      setEnviando(true);
+      setErrorLocal('');
 
-    // 4. Notificamos al componente padre
-    onAgregarLibro(nuevoLibro);
+      const nuevoLibro: NuevoLibroDto = {
+        titulo: titulo.trim(),
+        autor: autor.trim(),
+        genero,
+        disponible: true,
+      };
 
-    // 5. Limpiamos los campos del formulario reseteando el estado
-    setTitulo('');
-    setAutor('');
-    setGenero('Programación');
-    setError('');
+      await onAgregarLibro(nuevoLibro);
+
+      // Limpieza de campos al completar exitosamente el POST
+      setTitulo('');
+      setAutor('');
+      setGenero('Programación');
+    } catch (err: unknown) {
+      setErrorLocal(err instanceof Error ? err.message : 'Error al guardar el libro en el servidor.');
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
     <form className="card form-libro" onSubmit={manejarSubmit}>
       <div className="card-header">
-        <h3>➕ Agregar Nuevo Libro (Formulario Controlado)</h3>
+        <h3>➕ Agregar Libro (Petición HTTP POST /libros)</h3>
         <p className="card-subtitle">
-          Utiliza <code>useState</code> para sincronizar los inputs con la memoria de React.
+          Envía los datos a JSON Server mediante <code>axios.post()</code> encapsulado en <code>libroServicio</code>.
         </p>
       </div>
 
-      {error && <div className="alerta-error">{error}</div>}
+      {errorLocal && <div className="alerta-error">{errorLocal}</div>}
 
       <div className="form-grid">
         {/* Campo Título */}
@@ -70,11 +71,12 @@ export function LibroForm({ onAgregarLibro }: LibroFormProps) {
           <input
             id="titulo"
             type="text"
-            placeholder="Ej: El Principito"
+            placeholder="Ej: Código Limpio"
             value={titulo}
+            disabled={enviando}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setTitulo(e.target.value);
-              if (error) setError('');
+              if (errorLocal) setErrorLocal('');
             }}
           />
         </div>
@@ -85,11 +87,12 @@ export function LibroForm({ onAgregarLibro }: LibroFormProps) {
           <input
             id="autor"
             type="text"
-            placeholder="Ej: Antoine de Saint-Exupéry"
+            placeholder="Ej: Robert C. Martin"
             value={autor}
+            disabled={enviando}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setAutor(e.target.value);
-              if (error) setError('');
+              if (errorLocal) setErrorLocal('');
             }}
           />
         </div>
@@ -100,19 +103,23 @@ export function LibroForm({ onAgregarLibro }: LibroFormProps) {
           <select
             id="genero"
             value={genero}
+            disabled={enviando}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => setGenero(e.target.value)}
           >
             <option value="Programación">Programación</option>
+            <option value="Ingeniería de Software">Ingeniería de Software</option>
             <option value="Arquitectura de Software">Arquitectura de Software</option>
+            <option value="Novela / Realismo Mágico">Novela / Realismo Mágico</option>
             <option value="Novela / Ficción">Novela / Ficción</option>
+            <option value="Ficción / Cuentos">Ficción / Cuentos</option>
             <option value="Ciencia y Tecnología">Ciencia y Tecnología</option>
             <option value="Historia">Historia</option>
           </select>
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary">
-        Guardar en Biblioteca
+      <button type="submit" className="btn btn-primary" disabled={enviando}>
+        {enviando ? 'Guardando en API (POST)...' : 'Guardar en Base de Datos'}
       </button>
     </form>
   );

@@ -135,9 +135,24 @@ body {
   color: #4338ca;
 }
 
-.uso-derivado {
+.uso-triplete {
   background-color: #fef3c7;
   color: #b45309;
+}
+
+.uso-arquitectura {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.uso-rest {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+}
+
+.uso-derivado {
+  background-color: #fce7f3;
+  color: #be185d;
 }
 
 .concepto-card h4 {
@@ -160,12 +175,53 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #e0e7ff;
-  border: 1px solid #c7d2fe;
-  color: #3730a3;
-  padding: 0.6rem 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: var(--text-main);
+  padding: 0.75rem 1.25rem;
   border-radius: 8px;
   font-size: 0.88rem;
+}
+
+.barra-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.timestamp-badge {
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #334155;
+}
+
+.barra-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.selector-cliente {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.select-cliente {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  background-color: #ffffff;
+  color: var(--text-main);
 }
 
 .btn-link {
@@ -533,3 +589,69 @@ code {
   border-radius: 4px;
   font-size: 0.88em;
 }
+
+.libro-id-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.libro-item.en-transito {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Estado de Error (Triplete de Asincronía) */
+.estado-error {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border: 2px dashed #fca5a5;
+  background-color: #fff1f2;
+  border-radius: var(--radius);
+}
+
+.icono-error {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.estado-error h3 {
+  color: #991b1b;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.mensaje-error {
+  color: #7f1d1d;
+  font-size: 0.95rem;
+  max-width: 600px;
+  margin: 0 auto 1.25rem auto;
+  line-height: 1.5;
+}
+
+.guia-solucion {
+  background: #ffffff;
+  border: 1px solid #fecdd3;
+  border-radius: 8px;
+  padding: 1rem;
+  max-width: 480px;
+  margin: 0 auto 1.5rem auto;
+  text-align: left;
+}
+
+.guia-solucion p {
+  color: #881337;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.guia-solucion pre {
+  margin: 0;
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
